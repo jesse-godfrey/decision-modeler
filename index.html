@@ -42,11 +42,9 @@ body{
   line-height:1.6;
 }
 
-/* PANEL SYSTEM */
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 1px 0 0 oklch(1 0 0/0.04) inset,0 1px 2px 0 oklch(0 0 0/0.5),0 8px 24px -8px oklch(0 0 0/0.4)}
 .panel-elevated{background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 1px 0 0 oklch(1 0 0/0.06) inset,0 8px 32px -8px oklch(0 0 0/0.6)}
 
-/* NAV */
 .nav{position:sticky;top:0;z-index:100;height:56px;background:oklch(0.135 0.005 60/0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
 .nav-left{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
 .nav-logo{width:30px;height:30px;flex-shrink:0}
@@ -60,19 +58,14 @@ body{
 .nav-cta{background:var(--orange);color:var(--orange-fg);border:none;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:500;padding:8px 18px;border-radius:var(--radius);transition:all 0.15s;box-shadow:0 0 0 1px oklch(0.7 0.18 48/0.2),0 4px 16px -4px oklch(0.7 0.18 48/0.4)}
 .nav-cta:hover{background:oklch(0.76 0.18 48);box-shadow:0 0 0 1px oklch(0.7 0.18 48/0.3),0 8px 24px -4px oklch(0.7 0.18 48/0.5)}
 
-/* SCREENS */
 .screen{display:none;min-height:calc(100vh - 56px)}
 .screen.active{display:block}
 
-/* TYPOGRAPHY */
 .eyebrow{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.3em;color:var(--orange);margin-bottom:10px}
 .eyebrow-muted{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.18em;color:var(--fg-muted)}
 h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02em}
-.display{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;text-wrap:balance}
-.mono{font-family:var(--font-mono);font-size:12px;color:var(--fg-muted)}
 .hairline{height:1px;background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent);margin:0}
 
-/* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--radius);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;border:none}
 .btn-orange{background:var(--orange);color:var(--orange-fg);box-shadow:0 0 0 1px oklch(0.7 0.18 48/0.2),0 4px 16px -4px oklch(0.7 0.18 48/0.4)}
 .btn-orange:hover{background:oklch(0.76 0.18 48)}
@@ -82,7 +75,7 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
 .btn-ghost:hover{background:var(--secondary);color:var(--fg)}
 .btn:disabled{opacity:0.35;cursor:not-allowed}
 
-/* ══════════════ HOME ══════════════ */
+/* HOME */
 .home-hero{max-width:56rem;margin:0 auto;padding:5rem 2rem 4rem;text-align:center}
 .hero-chip{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:4px 14px 4px 10px;margin-bottom:2rem}
 .hero-chip-dot{width:6px;height:6px;border-radius:50%;background:var(--orange)}
@@ -91,27 +84,24 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
 .hero-headline .accent{color:var(--orange)}
 .hero-sub{font-size:16px;color:var(--fg-muted);max-width:36rem;margin:0 auto 2.5rem;line-height:1.7}
 .hero-ctas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-
 .capability-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.capability-card{background:var(--surface-muted);padding:2rem;cursor:pointer;transition:background 0.15s;position:relative;overflow:hidden}
+.capability-card{background:var(--surface-muted);padding:2rem;cursor:pointer;transition:background 0.15s}
 .capability-card:hover{background:var(--surface)}
 .cap-num{font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);letter-spacing:0.12em;margin-bottom:1rem;display:block}
 .cap-title{font-family:var(--font-display);font-size:18px;font-weight:500;margin-bottom:0.75rem;letter-spacing:-0.01em}
 .cap-desc{font-size:13px;color:var(--fg-muted);line-height:1.6;margin-bottom:1.25rem}
 .cap-link{font-family:var(--font-mono);font-size:11px;color:var(--orange);letter-spacing:0.06em}
-
 .principles-section{padding:3rem 2rem;max-width:72rem;margin:0 auto}
 .principles-header{margin-bottom:2rem}
 .principles-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius)}
 .principle-item{background:var(--surface-muted);padding:1.5rem}
 .principle-code{font-family:var(--font-mono);font-size:10px;color:var(--orange);letter-spacing:0.15em;margin-bottom:8px;display:block}
 .principle-text{font-size:13px;color:var(--fg);line-height:1.5}
-
-.home-footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center;max-width:none}
+.home-footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center}
 .footer-left{font-size:12px;color:var(--fg-muted)}
 .footer-right{font-family:var(--font-mono);font-size:11px;color:var(--fg-muted);letter-spacing:0.06em;font-style:italic}
 
-/* ══════════════ DECIDE FLOW ══════════════ */
+/* FLOW */
 .flow-wrap{max-width:52rem;margin:0 auto;padding:3rem 2rem 4rem}
 .step-progress{display:flex;gap:3px;margin-bottom:2.5rem}
 .step-bar{height:3px;flex:1;background:var(--border);border-radius:2px;transition:background 0.3s}
@@ -119,26 +109,22 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
 .step-bar.active{background:oklch(0.72 0.18 48/0.5)}
 .step-meta{display:flex;align-items:baseline;gap:12px;margin-bottom:0.4rem}
 .step-title-text{font-family:var(--font-display);font-size:1.6rem;font-weight:500;letter-spacing:-0.02em;margin-bottom:1.75rem}
-
 .form-group{margin-bottom:1.25rem}
 .form-label{display:block;font-size:13px;font-weight:500;color:var(--fg-muted);margin-bottom:4px;letter-spacing:0.01em}
 .form-hint{font-size:11px;color:oklch(0.65 0.008 60/0.7);margin-bottom:5px;font-style:italic}
-.form-input,.form-textarea,.form-select{width:100%;background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:14px;font-family:var(--font-body);color:var(--fg);outline:none;transition:border-color 0.15s}
+.form-input,.form-textarea{width:100%;background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:14px;font-family:var(--font-body);color:var(--fg);outline:none;transition:border-color 0.15s}
 .form-input:focus,.form-textarea:focus{border-color:var(--orange-border)}
 .form-input::placeholder,.form-textarea::placeholder{color:oklch(0.65 0.008 60/0.5)}
 .form-textarea{resize:vertical;min-height:80px;line-height:1.5}
-
 .type-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1.5rem}
 .type-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 0.5rem;cursor:pointer;font-family:var(--font-body);text-align:center;transition:all 0.15s}
 .type-btn:hover{border-color:var(--border-mid);background:var(--surface-elevated)}
 .type-btn.selected{border-color:var(--orange-border);background:var(--orange-muted)}
 .type-icon{font-size:1.5rem;margin-bottom:6px}
 .type-name{font-size:12px;font-weight:500;color:var(--fg)}
-
 .urgency-row{display:flex;gap:8px}
 .urgency-btn{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:9px;font-size:13px;cursor:pointer;font-family:var(--font-body);color:var(--fg-muted);transition:all 0.15s;text-align:center}
 .urgency-btn.selected{border-color:var(--orange-border);background:var(--orange-muted);color:var(--orange)}
-
 .paths-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
 .path-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;transition:border-color 0.15s}
 .path-card:hover{border-color:var(--border-mid)}
@@ -178,7 +164,7 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
 .bias-btn.yes{border-color:oklch(0.6 0.22 28/0.5);background:oklch(0.6 0.22 28/0.1);color:var(--destructive)}
 .bias-btn.no{border-color:oklch(0.7 0.13 155/0.5);background:oklch(0.7 0.13 155/0.1);color:var(--success)}
 
-/* MODE SELECT */
+/* MODE */
 .mode-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
 .mode-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 0.75rem;cursor:pointer;font-family:var(--font-body);text-align:center;transition:all 0.15s}
 .mode-btn:hover{border-color:var(--border-mid)}
@@ -198,7 +184,6 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
 .say-it{background:var(--orange-muted);border:1px solid oklch(0.72 0.18 48/0.2);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.1rem}
 .say-it-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
 .say-it-text{font-family:var(--font-display);font-size:15px;font-style:italic;color:var(--fg);line-height:1.65}
-
 .action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.75rem}
 
 /* LOADING */
@@ -208,10 +193,9 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
 .ld-dot:nth-child(3){animation-delay:.4s}
 @keyframes ldp{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
 
-/* ══════════════ CHAT ══════════════ */
+/* CHAT */
 .chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 56px)}
-.chat-header{padding:1.5rem 2rem 0;max-width:52rem;width:100%;margin:0 auto}
-.chat-mode-bar{display:flex;gap:6px;flex-wrap:wrap;padding:0.75rem 2rem;border-bottom:1px solid var(--border);background:oklch(0.155 0.005 60/0.6);max-width:none}
+.chat-mode-bar{display:flex;gap:6px;flex-wrap:wrap;padding:0.75rem 2rem;border-bottom:1px solid var(--border);background:oklch(0.155 0.005 60/0.6)}
 .chat-mode-chip{background:transparent;border:1px solid var(--border);border-radius:99px;padding:5px 14px;font-size:12px;cursor:pointer;font-family:var(--font-body);color:var(--fg-muted);transition:all 0.15s}
 .chat-mode-chip:hover{border-color:var(--border-mid);color:var(--fg)}
 .chat-mode-chip.active{background:var(--orange-muted);border-color:var(--orange-border);color:var(--orange)}
@@ -233,7 +217,35 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
 .chat-send:hover{background:oklch(0.76 0.18 48)}
 .chat-disclaimer{font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);margin-top:6px;letter-spacing:0.04em}
 
-/* ══════════════ MODELS ══════════════ */
+/* VOICE */
+.voice-row{padding:2rem 2rem 0;display:flex;flex-direction:column;align-items:center;border-bottom:1px solid var(--border);flex-shrink:0}
+.voice-center{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:1.25rem}
+.voice-eyebrow{font-family:var(--font-mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--fg-muted)}
+.voice-btn{position:relative;display:flex;flex-direction:column;align-items:center;gap:12px;background:none;border:none;cursor:pointer;padding:0}
+.voice-btn-inner{width:72px;height:72px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;color:var(--orange-fg);position:relative;z-index:1;transition:background 0.2s,transform 0.15s}
+.voice-btn:hover .voice-btn-inner{background:oklch(0.76 0.18 48);transform:scale(1.04)}
+.voice-btn-label{font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--fg-muted);letter-spacing:0.01em}
+.voice-glow-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-66%);width:72px;height:72px;border-radius:50%;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.voice-glow-ring.speaking{opacity:1;animation:voice-pulse 1.4s ease-in-out infinite}
+@keyframes voice-pulse{
+  0%,100%{box-shadow:0 0 0 0 oklch(0.72 0.18 48/0.5),0 0 18px 2px oklch(0.72 0.18 48/0.35)}
+  50%{box-shadow:0 0 0 10px oklch(0.72 0.18 48/0),0 0 36px 8px oklch(0.72 0.18 48/0.55)}
+}
+.voice-btn.connecting .voice-btn-inner{background:var(--secondary);animation:connecting-pulse 1s ease-in-out infinite}
+.voice-btn.connected .voice-btn-inner{background:oklch(0.7 0.13 155)}
+.voice-btn.connected .voice-btn-label{color:var(--fg)}
+@keyframes connecting-pulse{0%,100%{opacity:0.6}50%{opacity:1}}
+.voice-status{font-family:var(--font-mono);font-size:11px;color:var(--fg-muted);letter-spacing:0.08em;min-height:16px;text-align:center}
+.voice-error{font-size:12px;color:var(--destructive);min-height:16px;text-align:center;max-width:320px;line-height:1.4}
+.tray-toggle{display:flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:var(--font-mono);font-size:11px;color:var(--fg-muted);padding:8px 0 12px;letter-spacing:0.06em;transition:color 0.15s}
+.tray-toggle:hover{color:var(--fg)}
+.tray-toggle svg{transition:transform 0.2s}
+.tray-toggle.collapsed svg{transform:rotate(180deg)}
+.chat-tray{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.chat-tray.collapsed{display:none}
+.chat-voice-paused{padding:12px 2rem;background:var(--orange-muted);border-top:1px solid var(--orange-border);font-family:var(--font-mono);font-size:11px;color:var(--orange);letter-spacing:0.08em;text-align:center;flex-shrink:0}
+
+/* MODELS */
 .models-wrap{display:flex;height:calc(100vh - 56px)}
 .models-sidebar{width:260px;flex-shrink:0;border-right:1px solid var(--border);background:oklch(0.155 0.005 60);display:flex;flex-direction:column;overflow:hidden}
 .models-sidebar-head{padding:1.25rem;border-bottom:1px solid var(--border);flex-shrink:0}
@@ -324,9 +336,7 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
       <button class="btn btn-outline" onclick="showScreen('history')">Open Decision History</button>
     </div>
   </div>
-
   <div class="hairline"></div>
-
   <div class="capability-grid">
     <div class="capability-card" onclick="startDecision()">
       <span class="cap-num">01</span>
@@ -347,9 +357,7 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
       <span class="cap-link">Browse models →</span>
     </div>
   </div>
-
   <div class="hairline"></div>
-
   <div class="principles-section">
     <div class="principles-header">
       <div class="eyebrow">Operating Principles</div>
@@ -363,7 +371,6 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
       <div class="principle-item"><span class="principle-code">P/05</span><div class="principle-text">Protect brand, strategy, and execution quality.</div></div>
     </div>
   </div>
-
   <div class="hairline"></div>
   <footer class="home-footer">
     <span class="footer-left">Decision Modeler · Built for clarity over inspiration.</span>
@@ -379,28 +386,57 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
 <!-- CHAT -->
 <div class="screen" id="screen-chat">
   <div class="chat-wrap">
-    <div class="chat-mode-bar">
-      <span style="font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);letter-spacing:0.1em;text-transform:uppercase;align-self:center;margin-right:6px">Mode</span>
-      <button class="chat-mode-chip active" onclick="setChatMode(this,'fast')">Fast Read</button>
-      <button class="chat-mode-chip" onclick="setChatMode(this,'full')">Full Walkthrough</button>
-      <button class="chat-mode-chip" onclick="setChatMode(this,'challenge')">Challenge My Thinking</button>
-      <button class="chat-mode-chip" onclick="setChatMode(this,'draft')">Draft Communication</button>
-    </div>
-    <div class="chat-messages" id="chat-msgs">
-      <div class="msg-wrap assistant">
-        <div class="msg-bubble"><strong>Decision Modeler</strong><br><br>What decision are you working on?<br><br>Give me the situation. I'll ask a few sharp questions before recommending anything — that's the deal.</div>
-        <span class="msg-time">Ready</span>
+
+    <!-- Voice row -->
+    <div class="voice-row">
+      <div class="voice-center">
+        <div class="voice-eyebrow">Strategic Partner · Voice Mode</div>
+        <button class="voice-btn" id="voice-btn" onclick="toggleVoice()">
+          <div class="voice-glow-ring" id="voice-glow-ring"></div>
+          <div class="voice-btn-inner">
+            <svg id="voice-icon-mic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            <svg id="voice-icon-stop" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+          </div>
+          <span class="voice-btn-label" id="voice-btn-label">Talk to Decision Modeler</span>
+        </button>
+        <div class="voice-status" id="voice-status"></div>
+        <div class="voice-error" id="voice-error"></div>
       </div>
+      <button class="tray-toggle" id="tray-toggle" onclick="toggleTray()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <span id="tray-toggle-label">Text chat</span>
+      </button>
     </div>
-    <div class="chat-input-wrap">
-      <div class="chat-input-inner">
-        <div class="chat-input-row">
-          <textarea class="chat-ta" id="chat-ta" rows="1" placeholder="Describe the decision or situation..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}" oninput="autoH(this)"></textarea>
-          <button class="chat-send" onclick="sendMsg()">↑</button>
+
+    <!-- Text chat tray -->
+    <div class="chat-tray" id="chat-tray">
+      <div class="chat-mode-bar">
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);letter-spacing:0.1em;text-transform:uppercase;align-self:center;margin-right:6px">Mode</span>
+        <button class="chat-mode-chip active" onclick="setChatMode(this,'fast')">Fast Read</button>
+        <button class="chat-mode-chip" onclick="setChatMode(this,'full')">Full Walkthrough</button>
+        <button class="chat-mode-chip" onclick="setChatMode(this,'challenge')">Challenge My Thinking</button>
+        <button class="chat-mode-chip" onclick="setChatMode(this,'draft')">Draft Communication</button>
+      </div>
+      <div class="chat-messages" id="chat-msgs">
+        <div class="msg-wrap assistant">
+          <div class="msg-bubble"><strong>Decision Modeler</strong><br><br>What decision are you working on?<br><br>Give me the situation. I'll ask a few sharp questions before recommending anything — that's the deal.</div>
+          <span class="msg-time">Ready</span>
         </div>
-        <div class="chat-disclaimer">Connected to Claude · Calibrated to Jesse Godfrey's decision profile</div>
+      </div>
+      <div class="chat-voice-paused" id="chat-voice-paused" style="display:none">
+        <span>Voice in progress — text paused</span>
+      </div>
+      <div class="chat-input-wrap" id="chat-input-wrap">
+        <div class="chat-input-inner">
+          <div class="chat-input-row">
+            <textarea class="chat-ta" id="chat-ta" rows="1" placeholder="Describe the decision or situation..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}" oninput="autoH(this)"></textarea>
+            <button class="chat-send" onclick="sendMsg()">↑</button>
+          </div>
+          <div class="chat-disclaimer">Connected to Claude · Calibrated to Jesse Godfrey's decision profile</div>
+        </div>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -453,6 +489,8 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
 </div>
 
 <script>
+const WORKER_URL = "https://decisionmodeleragent.jessegodfrey.workers.dev/";
+
 const JESSE = `Name: Jesse Godfrey
 Role: Executive Creative Director, University Relations, Clemson University
 
@@ -507,17 +545,17 @@ const SYSTEM_MODELS = `You are a strategic thinking model advisor for Jesse Godf
 Your role is to identify the most relevant decision-making or strategic thinking models for Jesse's specific situation, drawing primarily from Krogerus and Tschäppeler's "The Decision Book: 50 Models for Strategic Thinking" (paraphrased only — never reproduce copyrighted text).
 
 Key models you know well:
-DECIDING: Eisenhower Matrix (urgent/important), Rubber Band Model (two opposing pulls), Consequence Model (short vs long-term), Morphological Box (dimensions + combinations), SWOT Analysis, 5 Whys / Simon Sinek's Why-How-What, Black Swan Model, BCG Matrix, Pareto Principle, Long Tail, Crossroads Model, Gap Analysis, Thinking Hats (de Bono), Rubicon Model (decision vs. implementation), Swiss Cheese Model (risk layers)
-IMPROVING: Flow Model (Csikszentmihalyi), Johari Window, Personal Performance Model, Maslow applied to professional life, Ikigai, Saboteur Model, Networking Target Model, Kolb's Learning Cycle
+DECIDING: Eisenhower Matrix, Rubber Band Model, Consequence Model, Morphological Box, SWOT Analysis, 5 Whys, Black Swan Model, BCG Matrix, Pareto Principle, Long Tail, Crossroads Model, Gap Analysis, Thinking Hats (de Bono), Rubicon Model, Swiss Cheese Model
+IMPROVING: Flow Model (Csikszentmihalyi), Johari Window, Personal Performance Model, Maslow, Ikigai, Saboteur Model, Networking Target Model, Kolb's Learning Cycle
 OTHERS: Conflict Escalation Model, Dunbar Number, Double Loop Learning (Argyris), Transactional Analysis, Influence Model, Tuckman's Team Model, Status Games Model
-CHANGE: Sigmoid Curve, Change Curve (Kübler-Ross adapted), Innovation Adoption Curve (Rogers), Disruptive Innovation (Christensen), Blue Ocean Strategy, Cynefin Framework, Scenario Planning, First Principles Thinking, Pivot Model
+CHANGE: Sigmoid Curve, Change Curve (Kübler-Ross), Innovation Adoption Curve (Rogers), Disruptive Innovation (Christensen), Blue Ocean Strategy, Cynefin Framework, Scenario Planning, First Principles Thinking, Pivot Model
 
 Jesse's context: Executive creative director — brand, strategy, creativity, execution, people. Blind spots: overcontrol, early lock-in, resisting externally-imposed change.
 
 Behavior:
 - Ask 1-2 focused questions to understand the situation before suggesting models
-- Then recommend 2-3 specific models by name with clear explanations (paraphrased, never copied)
-- Explain WHAT the model is, WHY it fits this situation, and HOW to run it concisely
+- Recommend 2-3 specific models by name with clear explanations (paraphrased, never copied)
+- Explain WHAT the model is, WHY it fits, and HOW to run it
 - Always name the one model you'd start with and why
 - Offer to walk through the model step by step
 - Reference "The Decision Book" by Krogerus & Tschäppeler when citing those models
@@ -547,7 +585,7 @@ let chatMode = 'fast';
 let modelsTab = 'recommend';
 let modelFilter = 'all';
 
-// ── NAV ──
+// NAV
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
@@ -558,12 +596,11 @@ function showScreen(name) {
   if(name==='models') initModels();
 }
 
-// ── FLOW ──
+// FLOW
 function startDecision() {
   draft={step:1,type:'',define:{decision:'',outcome:'',nonNeg:'',failureCost:'',timeline:''},context:{stakeholders:'',options:'',leaning:'',urgency:'',stuck:''},paths:null,scores:null,biases:{},mode:'',recommendation:null};
   saveDraft(); showScreen('decide'); renderStep();
 }
-
 function saveDraft(){localStorage.setItem('jdm_draft_v1',JSON.stringify(draft))}
 
 function renderStep(){
@@ -572,17 +609,10 @@ function renderStep(){
   const bars=steps.map((_,i)=>`<div class="step-bar ${i<draft.step-1?'done':i===draft.step-1?'active':''}"></div>`).join('');
   let body='';
   switch(draft.step){
-    case 1: body=step1(); break;
-    case 2: body=step2(); break;
-    case 3: body=step3(); break;
-    case 4: body=step4(); break;
-    case 5: body=step5(); break;
-    case 6: body=step6(); break;
-    case 7: body=step7(); break;
+    case 1:body=step1();break;case 2:body=step2();break;case 3:body=step3();break;
+    case 4:body=step4();break;case 5:body=step5();break;case 6:body=step6();break;case 7:body=step7();break;
   }
-  w.innerHTML=`<div class="step-progress">${bars}</div>
-  <div class="step-meta"><div class="eyebrow-muted">Step ${draft.step} of 7</div><div class="eyebrow">${steps[draft.step-1]}</div></div>
-  ${body}`;
+  w.innerHTML=`<div class="step-progress">${bars}</div><div class="step-meta"><div class="eyebrow-muted">Step ${draft.step} of 7</div><div class="eyebrow">${steps[draft.step-1]}</div></div>${body}`;
   if(draft.step===4&&!draft.paths) genPaths();
   if(draft.step===7&&!draft.recommendation) genRec();
 }
@@ -604,7 +634,6 @@ function step2(){
   <div class="form-group"><label class="form-label">Decision deadline</label><input class="form-input" id="f-tl" value="${d.timeline}" placeholder="When does this need to land?"></div>
   <div class="action-row"><button class="btn btn-ghost" onclick="draft.step=1;renderStep()">← Back</button><button class="btn btn-orange" onclick="saveStep2()">Continue →</button></div>`;
 }
-
 function saveStep2(){
   draft.define.decision=document.getElementById('f-dec').value.trim();
   draft.define.outcome=document.getElementById('f-out').value.trim();
@@ -626,7 +655,6 @@ function step3(){
   <div class="form-group"><label class="form-label">What feels stuck or frustrating?</label><div class="form-hint">Where is the real friction? What keeps you from deciding now?</div><textarea class="form-textarea" id="f-st" placeholder="e.g. Can't get alignment on what quality actually means here.">${c.stuck}</textarea></div>
   <div class="action-row"><button class="btn btn-ghost" onclick="draft.step=2;renderStep()">← Back</button><button class="btn btn-orange" onclick="saveStep3()">Generate Three Paths →</button></div>`;
 }
-
 function saveStep3(){
   draft.context.stakeholders=document.getElementById('f-sh').value.trim();
   draft.context.options=document.getElementById('f-op').value;
@@ -642,12 +670,7 @@ function step4(){
   const cls=['path-a','path-b','path-c'];
   return `<div class="step-title-text">Three viable paths</div>
   <p style="font-size:13px;color:var(--fg-muted);margin-bottom:1.25rem">Your Strategic strength is strongest when comparing paths — not defending the first strong one.</p>
-  <div class="paths-grid">${paths.map((p,i)=>`<div class="path-card ${cls[i]}">
-    <div class="path-label">Path ${p.id} · ${p.label}</div>
-    <div class="path-card-title">${p.title}</div>
-    <div class="path-card-desc">${p.description}</div>
-    <div class="path-updown"><strong>Upside:</strong> ${p.upside}<br><strong>Risk:</strong> ${p.risk}</div>
-  </div>`).join('')}</div>
+  <div class="paths-grid">${paths.map((p,i)=>`<div class="path-card ${cls[i]}"><div class="path-label">Path ${p.id} · ${p.label}</div><div class="path-card-title">${p.title}</div><div class="path-card-desc">${p.description}</div><div class="path-updown"><strong>Upside:</strong> ${p.upside}<br><strong>Risk:</strong> ${p.risk}</div></div>`).join('')}</div>
   <div class="action-row"><button class="btn btn-ghost" onclick="draft.step=3;renderStep()">← Back</button><button class="btn btn-orange" onclick="draft.step=5;renderStep()">Build Scorecard →</button></div>`;
 }
 
@@ -660,10 +683,7 @@ function step5(){
   <p style="font-size:13px;color:var(--fg-muted);margin-bottom:1.25rem">Rate each path 1–5. Each criterion is weighted differently — read the descriptions before scoring.</p>
   <div class="scorecard">
     <div class="sc-head"><div class="sc-head-cell" style="text-align:left">Criterion</div><div class="sc-head-cell">Path A</div><div class="sc-head-cell">Path B</div><div class="sc-head-cell">Path C</div></div>
-    ${CRIT_META.map((c,i)=>`<div class="sc-row">
-      <div><div class="sc-crit-name">${c.name}</div><div class="sc-crit-weight">Weight: ${c.weight} · max ${c.weight*5} pts</div><div class="sc-crit-desc">${c.desc}</div></div>
-      ${[0,1,2].map(pi=>`<div class="sc-cell"><select class="sc-select" onchange="draft.scores[${pi}]['${c.key}']=parseInt(this.value);saveDraft();renderStep()">${[1,2,3,4,5].map(v=>`<option${(draft.scores[pi][c.key]||3)===v?' selected':''}>${v}</option>`).join('')}</select></div>`).join('')}
-    </div>`).join('')}
+    ${CRIT_META.map((c,i)=>`<div class="sc-row"><div><div class="sc-crit-name">${c.name}</div><div class="sc-crit-weight">Weight: ${c.weight} · max ${c.weight*5} pts</div><div class="sc-crit-desc">${c.desc}</div></div>${[0,1,2].map(pi=>`<div class="sc-cell"><select class="sc-select" onchange="draft.scores[${pi}]['${c.key}']=parseInt(this.value);saveDraft();renderStep()">${[1,2,3,4,5].map(v=>`<option${(draft.scores[pi][c.key]||3)===v?' selected':''}>${v}</option>`).join('')}</select></div>`).join('')}</div>`).join('')}
     <div class="sc-total"><div class="sc-total-label">Weighted total (max 100)</div>${totals.map((t,i)=>`<div class="sc-total-val${i===maxIdx?' winner':''}">${t}</div>`).join('')}</div>
   </div>
   <div class="action-row"><button class="btn btn-ghost" onclick="draft.step=4;renderStep()">← Back</button><button class="btn btn-orange" onclick="draft.step=6;renderStep()">Run Bias Checks →</button></div>`;
@@ -678,14 +698,7 @@ function step6(){
   ];
   return `<div class="step-title-text">Bias checks</div>
   <p style="font-size:13px;color:var(--fg-muted);margin-bottom:1.25rem">Be honest. This is the part of the tool that pays for itself. A "yes" doesn't block the decision — it means slow down by one step.</p>
-  <div class="bias-grid">${checks.map(c=>`<div class="bias-card">
-    <div class="bias-q">${c.q}</div>
-    <div class="bias-flag">${c.flag}</div>
-    <div class="bias-btns">
-      <button class="bias-btn${draft.biases[c.key]==='yes'?' yes':''}" onclick="draft.biases['${c.key}']='yes';saveDraft();renderStep()">Yes — worth examining</button>
-      <button class="bias-btn${draft.biases[c.key]==='no'?' no':''}" onclick="draft.biases['${c.key}']='no';saveDraft();renderStep()">No — I'm clear here</button>
-    </div>
-  </div>`).join('')}</div>
+  <div class="bias-grid">${checks.map(c=>`<div class="bias-card"><div class="bias-q">${c.q}</div><div class="bias-flag">${c.flag}</div><div class="bias-btns"><button class="bias-btn${draft.biases[c.key]==='yes'?' yes':''}" onclick="draft.biases['${c.key}']='yes';saveDraft();renderStep()">Yes — worth examining</button><button class="bias-btn${draft.biases[c.key]==='no'?' no':''}" onclick="draft.biases['${c.key}']='no';saveDraft();renderStep()">No — I'm clear here</button></div></div>`).join('')}</div>
   <div class="action-row"><button class="btn btn-ghost" onclick="draft.step=5;renderStep()">← Back</button><button class="btn btn-orange" onclick="draft.step=7;draft.recommendation=null;saveDraft();renderStep()">Get Recommendation →</button></div>`;
 }
 
@@ -694,20 +707,9 @@ function step7(){
   const modes=[{id:'Direct',desc:'Brand risk high, time tight'},{id:'Collaborative',desc:'Buy-in critical'},{id:'Experimental',desc:'Path unclear, test first'},{id:'Delegated',desc:'Team growth opportunity'}];
   if(!rec) return `<div class="step-title-text">Recommendation</div><div style="padding:3rem 0;text-align:center"><div class="ld"><div class="ld-dot"></div><div class="ld-dot"></div><div class="ld-dot"></div></div><p style="margin-top:14px;font-size:13px;color:var(--fg-muted)">Analyzing inputs, scorecard, and bias flags…</p></div>`;
   return `<div class="step-title-text">Recommendation</div>
-  <div class="rec-hero">
-    <div class="rec-path-label">Recommended path</div>
-    <div class="rec-path-title">${rec.path}</div>
-    <div class="rec-why">${rec.why}</div>
-  </div>
-  <div style="margin-bottom:1.1rem">
-    <div class="eyebrow-muted" style="margin-bottom:8px">Decision mode</div>
-    <div class="mode-grid">${modes.map(m=>`<div class="mode-btn${draft.mode===m.id?' selected':''}" onclick="draft.mode='${m.id}';saveDraft();renderStep()"><div class="mode-btn-name">${m.id}</div><div class="mode-btn-desc">${m.desc}</div></div>`).join('')}</div>
-  </div>
-  <div class="rec-meta-grid">
-    <div class="rec-meta-card"><div class="rec-meta-label">Tradeoff accepted</div><div class="rec-meta-val">${rec.tradeoff}</div></div>
-    <div class="rec-meta-card"><div class="rec-meta-label">Next move</div><div class="rec-meta-val">${rec.next}</div></div>
-    <div class="rec-meta-card"><div class="rec-meta-label">Owner</div><div class="rec-meta-val">${rec.owner}</div></div>
-  </div>
+  <div class="rec-hero"><div class="rec-path-label">Recommended path</div><div class="rec-path-title">${rec.path}</div><div class="rec-why">${rec.why}</div></div>
+  <div style="margin-bottom:1.1rem"><div class="eyebrow-muted" style="margin-bottom:8px">Decision mode</div><div class="mode-grid">${modes.map(m=>`<div class="mode-btn${draft.mode===m.id?' selected':''}" onclick="draft.mode='${m.id}';saveDraft();renderStep()"><div class="mode-btn-name">${m.id}</div><div class="mode-btn-desc">${m.desc}</div></div>`).join('')}</div></div>
+  <div class="rec-meta-grid"><div class="rec-meta-card"><div class="rec-meta-label">Tradeoff accepted</div><div class="rec-meta-val">${rec.tradeoff}</div></div><div class="rec-meta-card"><div class="rec-meta-label">Next move</div><div class="rec-meta-val">${rec.next}</div></div><div class="rec-meta-card"><div class="rec-meta-label">Owner</div><div class="rec-meta-val">${rec.owner}</div></div></div>
   ${rec.say?`<div class="say-it"><div class="say-it-label">Say it like this</div><div class="say-it-text">"${rec.say}"</div></div>`:''}
   <div class="action-row"><button class="btn btn-ghost" onclick="draft.step=6;renderStep()">← Back</button><button class="btn btn-orange" onclick="saveDecision()">Save Decision</button><button class="btn btn-ghost" onclick="startDecision()">New Decision</button></div>`;
 }
@@ -731,19 +733,8 @@ async function genRec(){
   const paths=draft.paths||[];
   const scores=draft.scores||[];
   const totals=scores.map(s=>Math.round(Object.entries(WEIGHTS).reduce((sum,[k,w])=>(sum+(s[k]||3)*w),0)/5));
-  const maxIdx=totals.indexOf(Math.max(...totals));
   const flags=Object.entries(draft.biases).filter(([,v])=>v==='yes').map(([k])=>k).join(', ')||'none';
-  const prompt=`Decision: ${draft.define.decision}
-Type: ${draft.type}
-Outcome: ${draft.define.outcome}
-Non-negotiables: ${draft.define.nonNeg}
-Path A: ${paths[0]?.title} — ${paths[0]?.description}
-Path B: ${paths[1]?.title} — ${paths[1]?.description}
-Path C: ${paths[2]?.title} — ${paths[2]?.description}
-Weighted scores (0-100): A=${totals[0]}, B=${totals[1]}, C=${totals[2]}
-Bias flags (yes = worth examining): ${flags}
-
-Return raw JSON (no markdown): {"path":"Path X — Label · Title","why":"2-3 sentences","tradeoff":"We are choosing X over Y","next":"single next action sentence","owner":"who owns execution","say":"We're going to…"}`;
+  const prompt=`Decision: ${draft.define.decision}\nType: ${draft.type}\nOutcome: ${draft.define.outcome}\nNon-negotiables: ${draft.define.nonNeg}\nPath A: ${paths[0]?.title} — ${paths[0]?.description}\nPath B: ${paths[1]?.title} — ${paths[1]?.description}\nPath C: ${paths[2]?.title} — ${paths[2]?.description}\nWeighted scores (0-100): A=${totals[0]}, B=${totals[1]}, C=${totals[2]}\nBias flags (yes = worth examining): ${flags}\n\nReturn raw JSON (no markdown): {"path":"Path X — Label · Title","why":"2-3 sentences","tradeoff":"We are choosing X over Y","next":"single next action sentence","owner":"who owns execution","say":"We're going to…"}`;
   try{
     const r=await apiCall([{role:'user',content:prompt}],SYSTEM_PARTNER+'\n\nReturn ONLY raw JSON, no markdown, no explanation.',700);
     draft.recommendation=JSON.parse(r.replace(/```json|```/g,'').trim());
@@ -764,7 +755,7 @@ function saveDecision(){
   showScreen('history');
 }
 
-// ── CHAT ──
+// CHAT
 function setChatMode(btn,mode){
   document.querySelectorAll('.chat-mode-chip').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');chatMode=mode;
@@ -785,7 +776,161 @@ async function sendMsg(){
   }catch(e){removeLoading(lid);appendMsg('chat-msgs','assistant','Connection issue. Please try again.');}
 }
 
-// ── MODELS ──
+// VOICE
+let voiceWs=null,voiceConnected=false,voiceConnecting=false,trayOpen=true;
+let audioContext=null,micStream=null;
+
+function toggleTray(){
+  trayOpen=!trayOpen;
+  document.getElementById('chat-tray').classList.toggle('collapsed',!trayOpen);
+  const btn=document.getElementById('tray-toggle');
+  btn.classList.toggle('collapsed',!trayOpen);
+  document.getElementById('tray-toggle-label').textContent=trayOpen?'Text chat':'Show text chat';
+}
+
+function setVoiceState(state,statusText='',errorText=''){
+  const btn=document.getElementById('voice-btn');
+  const label=document.getElementById('voice-btn-label');
+  const status=document.getElementById('voice-status');
+  const err=document.getElementById('voice-error');
+  const micIcon=document.getElementById('voice-icon-mic');
+  const stopIcon=document.getElementById('voice-icon-stop');
+  const glowRing=document.getElementById('voice-glow-ring');
+  const inputWrap=document.getElementById('chat-input-wrap');
+  const voicePaused=document.getElementById('chat-voice-paused');
+  btn.className='voice-btn'+(state!=='idle'?' '+state:'');
+  status.textContent=statusText;
+  err.textContent=errorText;
+  if(state==='idle'){
+    label.textContent='Talk to Decision Modeler';
+    micIcon.style.display='';stopIcon.style.display='none';
+    glowRing.classList.remove('speaking');
+    inputWrap.style.display='';voicePaused.style.display='none';
+  } else if(state==='connecting'){
+    label.textContent='Connecting…';
+    micIcon.style.display='';stopIcon.style.display='none';
+    glowRing.classList.remove('speaking');
+    inputWrap.style.display='none';voicePaused.style.display='';
+  } else if(state==='connected'){
+    label.textContent='Tap to end session';
+    micIcon.style.display='none';stopIcon.style.display='';
+    glowRing.classList.remove('speaking');
+    inputWrap.style.display='none';voicePaused.style.display='';
+  } else if(state==='speaking'){
+    label.textContent='Speaking — tap to end';
+    micIcon.style.display='none';stopIcon.style.display='';
+    glowRing.classList.add('speaking');
+    inputWrap.style.display='none';voicePaused.style.display='';
+  }
+}
+
+async function toggleVoice(){
+  if(voiceConnected||voiceConnecting){endVoiceSession();return;}
+  if(trayOpen) toggleTray();
+  setVoiceState('connecting','Requesting microphone…');
+  try{
+    await navigator.mediaDevices.getUserMedia({audio:true});
+  }catch(e){
+    setVoiceState('idle','','Microphone access denied. Check browser permissions.');
+    if(!trayOpen) toggleTray();return;
+  }
+  setVoiceState('connecting','Connecting…');
+  voiceConnecting=true;
+  let signedUrl=null;
+  try{
+    const res=await fetch(WORKER_URL,{method:'POST'});
+    if(!res.ok) throw new Error(`Token server error: ${res.status}`);
+    const data=await res.json();
+    if(data.error) throw new Error(data.error);
+    signedUrl=data.signedUrl;
+  }catch(e){
+    voiceConnecting=false;
+    setVoiceState('idle','',`Could not reach voice server: ${e.message}`);
+    if(!trayOpen) toggleTray();return;
+  }
+  if(!signedUrl){
+    voiceConnecting=false;
+    setVoiceState('idle','','No signed URL returned. Check ElevenLabs agent settings.');
+    if(!trayOpen) toggleTray();return;
+  }
+  const lastDecision=buildLastDecisionSummary();
+  const promptOverride=`You are Decision Modeler, a strategic decision partner for Jesse Godfrey, Executive Creative Director of University Relations at Clemson.\n\nPush back. Don't flatter. If his framing is weak, say so plainly. Default to asking 3–7 sharp questions before recommending anything. Be specific to what he just said — never generic advice. Short paragraphs. Name the tradeoff. End with either a clarifying question or a concrete next move. Prefer clarity over inspiration. No emojis.\n\n--- WHO JESSE IS ---\n${JESSE}\n--- END PROFILE ---\n\n--- MOST RECENT DECISION CONTEXT ---\n${lastDecision}\n--- END CONTEXT ---`;
+  try{
+    voiceWs=new WebSocket(signedUrl);
+    voiceWs.onopen=()=>{
+      voiceConnecting=false;voiceConnected=true;
+      voiceWs.send(JSON.stringify({type:'conversation_initiation_client_data',conversation_config_override:{agent:{prompt:{prompt:promptOverride},first_message:"What decision are you working on? I'll ask a few sharp questions before recommending anything — that's the deal."}}}));
+      setVoiceState('connected','Listening');
+    };
+    voiceWs.onmessage=(event)=>{
+      if(event.data instanceof ArrayBuffer){
+        playAudioBuffer(event.data);return;
+      }
+      try{
+        const msg=JSON.parse(event.data);
+        if(msg.type==='agent_response'||msg.type==='audio') setVoiceState('speaking','Speaking…');
+        else if(msg.type==='user_transcript'||msg.type==='interruption') setVoiceState('connected','Listening');
+        else if(msg.type==='conversation_end') endVoiceSession();
+      }catch(e){}
+    };
+    voiceWs.onerror=()=>{voiceConnecting=false;voiceConnected=false;setVoiceState('idle','','Connection error. Check your ElevenLabs agent is active.');if(!trayOpen) toggleTray();};
+    voiceWs.onclose=()=>{voiceConnecting=false;voiceConnected=false;setVoiceState('idle','');if(!trayOpen) toggleTray();};
+    await setupMicCapture();
+  }catch(e){
+    voiceConnecting=false;voiceConnected=false;
+    setVoiceState('idle','',`Connection failed: ${e.message}`);
+    if(!trayOpen) toggleTray();
+  }
+}
+
+function endVoiceSession(){
+  if(voiceWs){voiceWs.close();voiceWs=null;}
+  if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;}
+  if(audioContext){audioContext.close();audioContext=null;}
+  voiceConnected=false;voiceConnecting=false;
+  setVoiceState('idle','');
+  if(!trayOpen) toggleTray();
+}
+
+async function setupMicCapture(){
+  try{
+    audioContext=new(window.AudioContext||window.webkitAudioContext)({sampleRate:16000});
+    micStream=await navigator.mediaDevices.getUserMedia({audio:{sampleRate:16000,channelCount:1,echoCancellation:true,noiseSuppression:true}});
+    const source=audioContext.createMediaStreamSource(micStream);
+    const workletCode=`class MicProc extends AudioWorkletProcessor{process(inputs){const ch=inputs[0][0];if(ch)this.port.postMessage(ch);return true;}}registerProcessor('mic-proc',MicProc);`;
+    await audioContext.audioWorklet.addModule(URL.createObjectURL(new Blob([workletCode],{type:'application/javascript'})));
+    const worklet=new AudioWorkletNode(audioContext,'mic-proc');
+    source.connect(worklet);
+    worklet.port.onmessage=(e)=>{
+      if(voiceWs&&voiceWs.readyState===WebSocket.OPEN){
+        const f32=e.data;const i16=new Int16Array(f32.length);
+        for(let i=0;i<f32.length;i++) i16[i]=Math.max(-32768,Math.min(32767,f32[i]*32768));
+        voiceWs.send(i16.buffer);
+      }
+    };
+    voiceWs.binaryType='arraybuffer';
+  }catch(e){console.warn('Mic setup failed:',e.message);}
+}
+
+async function playAudioBuffer(buffer){
+  if(!audioContext) return;
+  try{
+    const decoded=await audioContext.decodeAudioData(buffer.slice(0));
+    const src=audioContext.createBufferSource();
+    src.buffer=decoded;src.connect(audioContext.destination);src.start();
+  }catch(e){}
+}
+
+function buildLastDecisionSummary(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('jdm_decisions_v1')||'[]');
+    if(!saved.length) return 'No prior decisions yet.';
+    const d=saved[0];
+    return [`Title: ${d.title}`,`Type: ${d.type}`,`Decision: ${d.define?.decision}`,`Outcome: ${d.define?.outcome}`,`Leaning: ${d.context?.leaning||'not specified'}`,`Stuck on: ${d.context?.stuck||'not specified'}`,`Recommendation: ${d.recommendation?.path} · ${d.recommendation?.mode}`,`Tradeoff: ${d.recommendation?.tradeoff}`,`Next move: ${d.recommendation?.next}`].join('\n');
+  }catch(e){return 'No prior decisions yet.';}
+}
+
+// MODELS
 const DECISION_MODELS=[
   {slug:'eisenhower',name:'The Eisenhower Matrix',cat:'deciding',oneLiner:'Separate what is urgent from what is important — they are not the same.',whenToUse:'When everything feels like it is on fire and you cannot tell what actually matters. Or when you are over-investing time in reactive work.',exercise:'Draw a 2×2: urgent/not urgent on one axis, important/not important on the other. Place every current demand into a quadrant. The top-right (important, not urgent) is where your leverage is. The bottom-right (urgent, not important) is where most of your reactive energy is going.',output:'A clear picture of where your time is going vs. where it should go.',source:'The Decision Book'},
   {slug:'rubber-band',name:'The Rubber Band Model',cat:'deciding',oneLiner:'When two opposing forces both feel non-negotiable, the tension itself is the decision.',whenToUse:'When you feel pulled in two directions and cannot reconcile them — or when a decision keeps cycling without resolution.',exercise:'Name the two poles pulling you. On one end: what you want to move toward. On the other: what you cannot leave behind. The stretch between them is the productive zone. A decision snaps the tension — the question is whether the snap is intentional or accidental.',output:'Clarity on what is actually holding you back, and whether the constraint is real.',source:'The Decision Book'},
@@ -801,23 +946,9 @@ const DECISION_MODELS=[
   {slug:'cynefin',name:'The Cynefin Framework',cat:'change',oneLiner:'Not all problems are the same kind of problem. The approach that works in one domain fails in another.',whenToUse:"When a decision feels stuck or when standard processes aren't producing results.",exercise:"Place the situation in one of four domains: Simple (clear cause-effect, apply best practice), Complicated (expert analysis needed, apply good practice), Complex (cause-effect only visible in retrospect — probe, sense, respond), Chaotic (act first to establish stability, then sense). Most creative and brand decisions live in Complex, not Complicated.",output:'A diagnosis of what kind of decision you are actually making — and therefore what decision-making approach is appropriate.',source:'Based on Snowden · referenced in strategic frameworks'}
 ];
 
-function initModels(){
-  renderModelsMain();
-}
-
-function setModelsTab(tab,btn){
-  modelsTab=tab;
-  document.querySelectorAll('.models-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderModelsMain();
-}
-
-function filterModelCat(cat,el){
-  modelFilter=cat;
-  document.querySelectorAll('.models-cat-item').forEach(i=>i.classList.remove('active'));
-  if(el) el.classList.add('active');
-  if(modelsTab==='browse') renderModelsMain();
-}
+function initModels(){renderModelsMain();}
+function setModelsTab(tab,btn){modelsTab=tab;document.querySelectorAll('.models-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderModelsMain();}
+function filterModelCat(cat,el){modelFilter=cat;document.querySelectorAll('.models-cat-item').forEach(i=>i.classList.remove('active'));if(el)el.classList.add('active');if(modelsTab==='browse')renderModelsMain();}
 
 function renderModelsMain(){
   const wrap=document.getElementById('models-main-content');
@@ -825,64 +956,28 @@ function renderModelsMain(){
   if(modelsTab==='recommend'){
     inputWrap.style.display='';
     if(modelsHistory.length===0){
-      wrap.innerHTML=`<div style="max-width:44rem">
-        <div class="eyebrow" style="margin-bottom:6px">Recommend a Model</div>
-        <p style="font-size:14px;color:var(--fg-muted);margin-bottom:1.5rem;line-height:1.7">Describe your situation and I'll match you to 2–3 models from <em>The Decision Book</em> by Krogerus & Tschäppeler, plus other established frameworks. I'll ask one or two focused questions first.</p>
-        <div style="margin-bottom:1.25rem"><div class="eyebrow-muted" style="margin-bottom:10px">Quick situations</div>
-        <div class="quick-prompts">
-          <button class="quick-prompt" onclick="triggerQuick('Everything feels like priority one this week.')">Everything feels like priority one this week.</button>
-          <button class="quick-prompt" onclick="triggerQuick('I keep relitigating a call I already made.')">I keep relitigating a call I already made.</button>
-          <button class="quick-prompt" onclick="triggerQuick('I\'m overcontrolling a project the team should own.')">I'm overcontrolling a project the team should own.</button>
-          <button class="quick-prompt" onclick="triggerQuick('I\'m tempted to pivot rather than push through.')">I'm tempted to pivot rather than push through.</button>
-        </div></div>
-      </div>`;
+      wrap.innerHTML=`<div style="max-width:44rem"><div class="eyebrow" style="margin-bottom:6px">Recommend a Model</div><p style="font-size:14px;color:var(--fg-muted);margin-bottom:1.5rem;line-height:1.7">Describe your situation and I'll match you to 2–3 models from <em>The Decision Book</em> by Krogerus & Tschäppeler, plus other established frameworks. I'll ask one or two focused questions first.</p><div style="margin-bottom:1.25rem"><div class="eyebrow-muted" style="margin-bottom:10px">Quick situations</div><div class="quick-prompts"><button class="quick-prompt" onclick="triggerQuick('Everything feels like priority one this week.')">Everything feels like priority one this week.</button><button class="quick-prompt" onclick="triggerQuick('I keep relitigating a call I already made.')">I keep relitigating a call I already made.</button><button class="quick-prompt" onclick="triggerQuick('I\'m overcontrolling a project the team should own.')">I'm overcontrolling a project the team should own.</button><button class="quick-prompt" onclick="triggerQuick('I\'m tempted to pivot rather than push through.')">I'm tempted to pivot rather than push through.</button></div></div></div>`;
     }
   } else {
     inputWrap.style.display='none';
     const filtered=modelFilter==='all'?DECISION_MODELS:DECISION_MODELS.filter(m=>m.cat===modelFilter);
-    wrap.innerHTML=`<div style="max-width:44rem">${filtered.map(m=>`
-      <div class="model-card">
-        <div class="model-card-name">${m.name}</div>
-        <div class="model-card-src">${m.source}</div>
-        <div class="model-card-desc"><em>${m.oneLiner}</em></div>
-        <div class="model-card-section">When to use it</div>
-        <div class="model-card-body">${m.whenToUse}</div>
-        <div class="model-card-section">Run the exercise</div>
-        <div class="model-card-body">${m.exercise}</div>
-        <div class="model-card-section">What you walk away with</div>
-        <div class="model-card-body">${m.output}</div>
-        <button class="model-use-btn" onclick="useModel('${m.name}')">Walk me through this →</button>
-      </div>`).join('')}</div>`;
+    wrap.innerHTML=`<div style="max-width:44rem">${filtered.map(m=>`<div class="model-card"><div class="model-card-name">${m.name}</div><div class="model-card-src">${m.source}</div><div class="model-card-desc"><em>${m.oneLiner}</em></div><div class="model-card-section">When to use it</div><div class="model-card-body">${m.whenToUse}</div><div class="model-card-section">Run the exercise</div><div class="model-card-body">${m.exercise}</div><div class="model-card-section">What you walk away with</div><div class="model-card-body">${m.output}</div><button class="model-use-btn" onclick="useModel('${m.name}')">Walk me through this →</button></div>`).join('')}</div>`;
   }
 }
 
 function triggerQuick(text){
-  if(modelsTab!=='recommend'){
-    modelsTab='recommend';
-    document.querySelectorAll('.models-tab')[0].classList.add('active');
-    document.querySelectorAll('.models-tab')[1].classList.remove('active');
-  }
+  if(modelsTab!=='recommend'){modelsTab='recommend';document.querySelectorAll('.models-tab')[0].classList.add('active');document.querySelectorAll('.models-tab')[1].classList.remove('active');}
   renderModelsMain();
-  setTimeout(()=>{
-    const ta=document.getElementById('models-ta');
-    if(ta){ta.value=text;sendModels();}
-  },100);
+  setTimeout(()=>{const ta=document.getElementById('models-ta');if(ta){ta.value=text;sendModels();}},100);
 }
-
 function useModel(name){
-  modelsTab='recommend';
-  document.querySelectorAll('.models-tab')[0].classList.add('active');
-  document.querySelectorAll('.models-tab')[1].classList.remove('active');
+  modelsTab='recommend';document.querySelectorAll('.models-tab')[0].classList.add('active');document.querySelectorAll('.models-tab')[1].classList.remove('active');
   renderModelsMain();
-  setTimeout(()=>{
-    const ta=document.getElementById('models-ta');
-    if(ta){ta.value=`Walk me through the ${name} model step by step for my current situation.`;sendModels();}
-  },100);
+  setTimeout(()=>{const ta=document.getElementById('models-ta');if(ta){ta.value=`Walk me through the ${name} model step by step for my current situation.`;sendModels();}},100);
 }
 
 async function sendModels(){
-  const ta=document.getElementById('models-ta');
-  if(!ta)return;
+  const ta=document.getElementById('models-ta');if(!ta)return;
   const text=ta.value.trim();if(!text)return;
   ta.value='';ta.style.height='44px';
   const wrap=document.getElementById('models-main-content');
@@ -900,25 +995,17 @@ async function sendModels(){
   }catch(e){lid.remove();appendMsgTo(inner,'assistant','Connection issue. Please try again.');}
 }
 
-// ── HISTORY ──
+// HISTORY
 function renderHistory(){
   const el=document.getElementById('history-list');
   if(!decisions.length){
     el.innerHTML=`<div class="history-empty"><div class="history-empty-title">No decisions saved yet.</div><div class="history-empty-sub">Complete a decision flow to save your first record.</div><button class="btn btn-orange" onclick="startDecision()">Start a Decision</button></div>`;
     return;
   }
-  el.innerHTML=decisions.map(d=>`
-    <div class="history-row">
-      <div>
-        <div class="history-row-title">${d.title}</div>
-        <div class="history-row-meta"><span class="badge badge-type">${d.type}</span><span class="badge badge-path">${(d.recommendation?.path||'').slice(0,28)}…</span></div>
-        <div class="history-row-detail"><strong>Tradeoff:</strong> ${d.recommendation?.tradeoff||'—'}<br><strong>Next:</strong> ${d.recommendation?.next||'—'}</div>
-      </div>
-      <div class="history-row-date">${new Date(d.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
-    </div>`).join('');
+  el.innerHTML=decisions.map(d=>`<div class="history-row"><div><div class="history-row-title">${d.title}</div><div class="history-row-meta"><span class="badge badge-type">${d.type}</span><span class="badge badge-path">${(d.recommendation?.path||'').slice(0,28)}…</span></div><div class="history-row-detail"><strong>Tradeoff:</strong> ${d.recommendation?.tradeoff||'—'}<br><strong>Next:</strong> ${d.recommendation?.next||'—'}</div></div><div class="history-row-date">${new Date(d.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div></div>`).join('');
 }
 
-// ── API ──
+// API
 async function apiCall(messages,system,maxTokens=1000){
   const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,system,messages})});
   const d=await r.json();
@@ -926,56 +1013,44 @@ async function apiCall(messages,system,maxTokens=1000){
   return d.content[0].text;
 }
 
-// ── UTILS ──
+// UTILS
 function autoH(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px'}
 
 function appendMsg(containerId,role,text){
   const c=document.getElementById(containerId);
-  const div=document.createElement('div');
-  div.className='msg-wrap '+role;
+  const div=document.createElement('div');div.className='msg-wrap '+role;
   const time=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
   div.innerHTML=`<div class="msg-bubble">${fmt(text)}</div><span class="msg-time">${time}</span>`;
   c.appendChild(div);c.scrollTop=c.scrollHeight;
 }
-
 function appendMsgTo(el,role,text){
-  const div=document.createElement('div');
-  div.className='msg-wrap '+role;
+  const div=document.createElement('div');div.className='msg-wrap '+role;
   const time=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
   div.innerHTML=`<div class="msg-bubble">${fmt(text)}</div><span class="msg-time">${time}</span>`;
   el.appendChild(div);el.scrollTop=el.scrollHeight;
 }
-
 function loadingMsg(containerId){
   const c=document.getElementById(containerId);
-  const div=document.createElement('div');
-  div.className='msg-wrap assistant';
+  const div=document.createElement('div');div.className='msg-wrap assistant';
   div.innerHTML=`<div class="msg-bubble"><div class="ld"><div class="ld-dot"></div><div class="ld-dot"></div><div class="ld-dot"></div></div></div>`;
-  c.appendChild(div);c.scrollTop=c.scrollHeight;
-  return div;
+  c.appendChild(div);c.scrollTop=c.scrollHeight;return div;
 }
-
 function loadingMsgIn(el){
-  const div=document.createElement('div');
-  div.className='msg-wrap assistant';
+  const div=document.createElement('div');div.className='msg-wrap assistant';
   div.innerHTML=`<div class="msg-bubble"><div class="ld"><div class="ld-dot"></div><div class="ld-dot"></div><div class="ld-dot"></div></div></div>`;
-  el.appendChild(div);
-  return div;
+  el.appendChild(div);return div;
 }
-
 function removeLoading(el){if(el&&el.parentNode)el.parentNode.removeChild(el)}
 
 function fmt(t){
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>')
     .replace(/^### (.*)/gm,'<h4 style="font-family:var(--font-display);font-size:15px;font-weight:500;margin:10px 0 4px;letter-spacing:-0.01em">$1</h4>')
     .replace(/^## (.*)/gm,'<h3 style="font-family:var(--font-display);font-size:16px;font-weight:500;margin:12px 0 5px;letter-spacing:-0.01em">$1</h3>')
     .replace(/^- (.*)/gm,'<div style="padding:2px 0 2px 14px;position:relative"><span style="position:absolute;left:0;color:var(--orange)">·</span>$1</div>')
     .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
 }
 
-// Init models on first load
 initModels();
 </script>
 </body>
