@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decision Modeler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:oklch(0.135 0.005 60);
+  --surface:oklch(0.175 0.005 60);
+  --surface-elevated:oklch(0.215 0.005 60);
+  --surface-muted:oklch(0.155 0.005 60);
+  --secondary:oklch(0.245 0.005 60);
+  --fg:oklch(0.94 0.005 60);
+  --fg-muted:oklch(0.65 0.008 60);
+  --orange:oklch(0.72 0.18 48);
+  --orange-fg:oklch(0.135 0.005 60);
+  --orange-muted:oklch(0.72 0.18 48 / 0.15);
+  --orange-border:oklch(0.72 0.18 48 / 0.4);
+  --border:oklch(1 0 0 / 0.08);
+  --border-mid:oklch(1 0 0 / 0.13);
+  --destructive:oklch(0.6 0.22 28);
+  --success:oklch(0.7 0.13 155);
+  --radius:0.5rem;
+  --font-display:'Bricolage Grotesque',Inter,system-ui,sans-serif;
+  --font-body:Inter,system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  background-image:radial-gradient(at 0% 0%,oklch(0.72 0.18 48/0.04) 0px,transparent 50%),radial-gradient(at 100% 100%,oklch(0.72 0.18 48/0.03) 0px,transparent 50%);
+  background-attachment:fixed;
+  color:var(--fg);
+  min-height:100vh;
+  font-size:15px;
+  line-height:1.6;
+}
+
+/* PANEL SYSTEM */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 1px 0 0 oklch(1 0 0/0.04) inset,0 1px 2px 0 oklch(0 0 0/0.5),0 8px 24px -8px oklch(0 0 0/0.4)}
+.panel-elevated{background:var(--surface-elevated);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 1px 0 0 oklch(1 0 0/0.06) inset,0 8px 32px -8px oklch(0 0 0/0.6)}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;height:56px;background:oklch(0.135 0.005 60/0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
+.nav-left{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
+.nav-logo{width:30px;height:30px;flex-shrink:0}
+.nav-wordmark{display:flex;flex-direction:column;gap:1px}
+.nav-title{font-family:var(--font-display);font-size:14px;font-weight:500;color:var(--fg);letter-spacing:-0.01em;line-height:1}
+.nav-kicker{font-family:var(--font-mono);font-size:9px;color:var(--fg-muted);letter-spacing:0.12em;text-transform:uppercase;line-height:1}
+.nav-center{display:flex;gap:2px}
+.nav-link{background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:13px;color:var(--fg-muted);padding:6px 14px;border-radius:calc(var(--radius) - 2px);transition:all 0.15s}
+.nav-link:hover{color:var(--fg);background:var(--secondary)}
+.nav-link.active{color:var(--fg);background:var(--secondary)}
+.nav-cta{background:var(--orange);color:var(--orange-fg);border:none;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:500;padding:8px 18px;border-radius:var(--radius);transition:all 0.15s;box-shadow:0 0 0 1px oklch(0.7 0.18 48/0.2),0 4px 16px -4px oklch(0.7 0.18 48/0.4)}
+.nav-cta:hover{background:oklch(0.76 0.18 48);box-shadow:0 0 0 1px oklch(0.7 0.18 48/0.3),0 8px 24px -4px oklch(0.7 0.18 48/0.5)}
+
+/* SCREENS */
+.screen{display:none;min-height:calc(100vh - 56px)}
+.screen.active{display:block}
+
+/* TYPOGRAPHY */
+.eyebrow{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.3em;color:var(--orange);margin-bottom:10px}
+.eyebrow-muted{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.18em;color:var(--fg-muted)}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02em}
+.display{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;text-wrap:balance}
+.mono{font-family:var(--font-mono);font-size:12px;color:var(--fg-muted)}
+.hairline{height:1px;background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent);margin:0}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--radius);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;border:none}
+.btn-orange{background:var(--orange);color:var(--orange-fg);box-shadow:0 0 0 1px oklch(0.7 0.18 48/0.2),0 4px 16px -4px oklch(0.7 0.18 48/0.4)}
+.btn-orange:hover{background:oklch(0.76 0.18 48)}
+.btn-outline{background:transparent;color:var(--fg);border:1px solid var(--border-mid)}
+.btn-outline:hover{background:var(--secondary);border-color:oklch(1 0 0/0.2)}
+.btn-ghost{background:transparent;color:var(--fg-muted);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--secondary);color:var(--fg)}
+.btn:disabled{opacity:0.35;cursor:not-allowed}
+
+/* ══════════════ HOME ══════════════ */
+.home-hero{max-width:56rem;margin:0 auto;padding:5rem 2rem 4rem;text-align:center}
+.hero-chip{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:4px 14px 4px 10px;margin-bottom:2rem}
+.hero-chip-dot{width:6px;height:6px;border-radius:50%;background:var(--orange)}
+.hero-chip-text{font-family:var(--font-mono);font-size:11px;color:var(--fg-muted);letter-spacing:0.08em}
+.hero-headline{font-size:clamp(2.2rem,5vw,3.8rem);font-family:var(--font-display);font-weight:500;letter-spacing:-0.025em;line-height:1.08;text-wrap:balance;margin-bottom:1.25rem}
+.hero-headline .accent{color:var(--orange)}
+.hero-sub{font-size:16px;color:var(--fg-muted);max-width:36rem;margin:0 auto 2.5rem;line-height:1.7}
+.hero-ctas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+.capability-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.capability-card{background:var(--surface-muted);padding:2rem;cursor:pointer;transition:background 0.15s;position:relative;overflow:hidden}
+.capability-card:hover{background:var(--surface)}
+.cap-num{font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);letter-spacing:0.12em;margin-bottom:1rem;display:block}
+.cap-title{font-family:var(--font-display);font-size:18px;font-weight:500;margin-bottom:0.75rem;letter-spacing:-0.01em}
+.cap-desc{font-size:13px;color:var(--fg-muted);line-height:1.6;margin-bottom:1.25rem}
+.cap-link{font-family:var(--font-mono);font-size:11px;color:var(--orange);letter-spacing:0.06em}
+
+.principles-section{padding:3rem 2rem;max-width:72rem;margin:0 auto}
+.principles-header{margin-bottom:2rem}
+.principles-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius)}
+.principle-item{background:var(--surface-muted);padding:1.5rem}
+.principle-code{font-family:var(--font-mono);font-size:10px;color:var(--orange);letter-spacing:0.15em;margin-bottom:8px;display:block}
+.principle-text{font-size:13px;color:var(--fg);line-height:1.5}
+
+.home-footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center;max-width:none}
+.footer-left{font-size:12px;color:var(--fg-muted)}
+.footer-right{font-family:var(--font-mono);font-size:11px;color:var(--fg-muted);letter-spacing:0.06em;font-style:italic}
+
+/* ══════════════ DECIDE FLOW ══════════════ */
+.flow-wrap{max-width:52rem;margin:0 auto;padding:3rem 2rem 4rem}
+.step-progress{display:flex;gap:3px;margin-bottom:2.5rem}
+.step-bar{height:3px;flex:1;background:var(--border);border-radius:2px;transition:background 0.3s}
+.step-bar.done{background:var(--orange)}
+.step-bar.active{background:oklch(0.72 0.18 48/0.5)}
+.step-meta{display:flex;align-items:baseline;gap:12px;margin-bottom:0.4rem}
+.step-title-text{font-family:var(--font-display);font-size:1.6rem;font-weight:500;letter-spacing:-0.02em;margin-bottom:1.75rem}
+
+.form-group{margin-bottom:1.25rem}
+.form-label{display:block;font-size:13px;font-weight:500;color:var(--fg-muted);margin-bottom:4px;letter-spacing:0.01em}
+.form-hint{font-size:11px;color:oklch(0.65 0.008 60/0.7);margin-bottom:5px;font-style:italic}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:14px;font-family:var(--font-body);color:var(--fg);outline:none;transition:border-color 0.15s}
+.form-input:focus,.form-textarea:focus{border-color:var(--orange-border)}
+.form-input::placeholder,.form-textarea::placeholder{color:oklch(0.65 0.008 60/0.5)}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.5}
+
+.type-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1.5rem}
+.type-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 0.5rem;cursor:pointer;font-family:var(--font-body);text-align:center;transition:all 0.15s}
+.type-btn:hover{border-color:var(--border-mid);background:var(--surface-elevated)}
+.type-btn.selected{border-color:var(--orange-border);background:var(--orange-muted)}
+.type-icon{font-size:1.5rem;margin-bottom:6px}
+.type-name{font-size:12px;font-weight:500;color:var(--fg)}
+
+.urgency-row{display:flex;gap:8px}
+.urgency-btn{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:9px;font-size:13px;cursor:pointer;font-family:var(--font-body);color:var(--fg-muted);transition:all 0.15s;text-align:center}
+.urgency-btn.selected{border-color:var(--orange-border);background:var(--orange-muted);color:var(--orange)}
+
+.paths-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+.path-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;transition:border-color 0.15s}
+.path-card:hover{border-color:var(--border-mid)}
+.path-label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px}
+.path-a .path-label{color:var(--fg-muted)}
+.path-b .path-label{color:var(--orange)}
+.path-c .path-label{color:var(--success)}
+.path-card-title{font-size:14px;font-weight:500;margin-bottom:6px;color:var(--fg)}
+.path-card-desc{font-size:12px;color:var(--fg-muted);line-height:1.55;margin-bottom:10px}
+.path-updown{font-size:11px;line-height:1.5;color:oklch(0.65 0.008 60/0.7)}
+.path-updown strong{color:var(--fg-muted)}
+
+/* SCORECARD */
+.scorecard{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.5rem}
+.sc-head{display:grid;grid-template-columns:1fr 70px 70px 70px;background:oklch(0.155 0.005 60);padding:10px 1.25rem;border-bottom:1px solid var(--border)}
+.sc-head-cell{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--fg-muted);text-align:center}
+.sc-head-cell:first-child{text-align:left}
+.sc-row{display:grid;grid-template-columns:1fr 70px 70px 70px;padding:12px 1.25rem;border-top:1px solid var(--border);align-items:start}
+.sc-row:nth-child(even){background:oklch(1 0 0/0.015)}
+.sc-crit-name{font-size:13px;color:var(--fg);margin-bottom:2px}
+.sc-crit-weight{font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);margin-bottom:4px}
+.sc-crit-desc{font-size:11px;color:oklch(0.65 0.008 60/0.65);line-height:1.45;font-style:italic}
+.sc-cell{text-align:center;padding-top:2px}
+.sc-select{width:48px;text-align:center;font-size:13px;font-family:var(--font-mono);border:1px solid var(--border);border-radius:4px;padding:4px;background:var(--surface-muted);color:var(--fg);cursor:pointer}
+.sc-total{display:grid;grid-template-columns:1fr 70px 70px 70px;padding:12px 1.25rem;background:oklch(0.155 0.005 60);border-top:1px solid var(--border-mid)}
+.sc-total-label{font-size:13px;font-weight:500;color:var(--fg-muted)}
+.sc-total-val{text-align:center;font-family:var(--font-mono);font-size:15px;font-weight:500;color:var(--fg-muted)}
+.sc-total-val.winner{color:var(--orange)}
+
+/* BIAS */
+.bias-grid{display:grid;gap:10px;margin-bottom:1.5rem}
+.bias-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.bias-q{font-size:14px;font-weight:500;margin-bottom:5px}
+.bias-flag{font-size:12px;color:var(--fg-muted);line-height:1.55;margin-bottom:10px;font-style:italic}
+.bias-btns{display:flex;gap:8px}
+.bias-btn{flex:1;background:var(--surface-muted);border:1px solid var(--border);border-radius:calc(var(--radius) - 2px);padding:8px;font-size:12px;cursor:pointer;font-family:var(--font-body);color:var(--fg-muted);transition:all 0.15s;text-align:center}
+.bias-btn.yes{border-color:oklch(0.6 0.22 28/0.5);background:oklch(0.6 0.22 28/0.1);color:var(--destructive)}
+.bias-btn.no{border-color:oklch(0.7 0.13 155/0.5);background:oklch(0.7 0.13 155/0.1);color:var(--success)}
+
+/* MODE SELECT */
+.mode-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
+.mode-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 0.75rem;cursor:pointer;font-family:var(--font-body);text-align:center;transition:all 0.15s}
+.mode-btn:hover{border-color:var(--border-mid)}
+.mode-btn.selected{border-color:var(--orange-border);background:var(--orange-muted)}
+.mode-btn-name{font-size:13px;font-weight:500;color:var(--fg);margin-bottom:3px}
+.mode-btn-desc{font-size:11px;color:var(--fg-muted);line-height:1.4}
+
+/* REC */
+.rec-hero{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:var(--radius);padding:1.75rem;margin-bottom:1.1rem}
+.rec-path-label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
+.rec-path-title{font-family:var(--font-display);font-size:1.4rem;font-weight:500;letter-spacing:-0.02em;margin-bottom:0.5rem}
+.rec-why{font-size:14px;color:var(--fg-muted);line-height:1.7}
+.rec-meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.1rem}
+.rec-meta-card{background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem}
+.rec-meta-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--fg-muted);margin-bottom:5px}
+.rec-meta-val{font-size:13px;color:var(--fg);font-weight:500;line-height:1.5}
+.say-it{background:var(--orange-muted);border:1px solid oklch(0.72 0.18 48/0.2);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.1rem}
+.say-it-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
+.say-it-text{font-family:var(--font-display);font-size:15px;font-style:italic;color:var(--fg);line-height:1.65}
+
+.action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.75rem}
+
+/* LOADING */
+.ld{display:inline-flex;gap:4px;align-items:center}
+.ld-dot{width:5px;height:5px;border-radius:50%;background:var(--orange);animation:ldp 1s ease-in-out infinite}
+.ld-dot:nth-child(2){animation-delay:.2s}
+.ld-dot:nth-child(3){animation-delay:.4s}
+@keyframes ldp{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+
+/* ══════════════ CHAT ══════════════ */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 56px)}
+.chat-header{padding:1.5rem 2rem 0;max-width:52rem;width:100%;margin:0 auto}
+.chat-mode-bar{display:flex;gap:6px;flex-wrap:wrap;padding:0.75rem 2rem;border-bottom:1px solid var(--border);background:oklch(0.155 0.005 60/0.6);max-width:none}
+.chat-mode-chip{background:transparent;border:1px solid var(--border);border-radius:99px;padding:5px 14px;font-size:12px;cursor:pointer;font-family:var(--font-body);color:var(--fg-muted);transition:all 0.15s}
+.chat-mode-chip:hover{border-color:var(--border-mid);color:var(--fg)}
+.chat-mode-chip.active{background:var(--orange-muted);border-color:var(--orange-border);color:var(--orange)}
+.chat-messages{flex:1;overflow-y:auto;padding:1.5rem 2rem;display:flex;flex-direction:column;gap:14px;max-width:52rem;width:100%;margin:0 auto}
+.msg-wrap{display:flex;flex-direction:column}
+.msg-wrap.user{align-items:flex-end}
+.msg-wrap.assistant{align-items:flex-start}
+.msg-bubble{padding:12px 16px;border-radius:10px;font-size:14px;line-height:1.65;max-width:90%}
+.msg-wrap.user .msg-bubble{background:var(--secondary);color:var(--fg);border-bottom-right-radius:3px}
+.msg-wrap.assistant .msg-bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:3px;color:var(--fg)}
+.msg-time{font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);margin-top:4px;padding:0 4px}
+.chat-input-wrap{border-top:1px solid var(--border);padding:1rem 2rem;background:oklch(0.135 0.005 60/0.95);flex-shrink:0}
+.chat-input-inner{max-width:52rem;margin:0 auto}
+.chat-input-row{display:flex;gap:8px;align-items:flex-end}
+.chat-ta{flex:1;background:var(--surface-muted);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:14px;font-family:var(--font-body);color:var(--fg);resize:none;outline:none;min-height:44px;max-height:120px;line-height:1.5;transition:border-color 0.15s}
+.chat-ta:focus{border-color:var(--orange-border)}
+.chat-ta::placeholder{color:oklch(0.65 0.008 60/0.4)}
+.chat-send{background:var(--orange);color:var(--orange-fg);border:none;width:44px;height:44px;border-radius:var(--radius);cursor:pointer;font-size:17px;flex-shrink:0;transition:background 0.15s;display:flex;align-items:center;justify-content:center}
+.chat-send:hover{background:oklch(0.76 0.18 48)}
+.chat-disclaimer{font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);margin-top:6px;letter-spacing:0.04em}
+
+/* ══════════════ MODELS ══════════════ */
+.models-wrap{display:flex;height:calc(100vh - 56px)}
+.models-sidebar{width:260px;flex-shrink:0;border-right:1px solid var(--border);background:oklch(0.155 0.005 60);display:flex;flex-direction:column;overflow:hidden}
+.models-sidebar-head{padding:1.25rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.models-sidebar-title{font-family:var(--font-display);font-size:14px;font-weight:500;margin-bottom:2px}
+.models-sidebar-sub{font-size:11px;color:var(--fg-muted);line-height:1.5}
+.models-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.models-tab{flex:1;background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:12px;color:var(--fg-muted);padding:10px;transition:all 0.15s;border-bottom:2px solid transparent}
+.models-tab.active{color:var(--fg);border-bottom-color:var(--orange)}
+.models-cat-list{flex:1;overflow-y:auto;padding:0.5rem 0}
+.models-cat-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-muted);padding:8px 1.25rem 4px}
+.models-cat-item{display:flex;align-items:center;justify-content:space-between;padding:8px 1.25rem;cursor:pointer;transition:background 0.1s}
+.models-cat-item:hover{background:var(--secondary)}
+.models-cat-item.active{background:var(--orange-muted)}
+.models-cat-name{font-size:13px;color:var(--fg-muted)}
+.models-cat-item.active .models-cat-name{color:var(--fg)}
+.models-cat-count{font-family:var(--font-mono);font-size:10px;color:var(--fg-muted)}
+.models-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.models-chat-wrap{flex:1;overflow-y:auto;padding:1.5rem}
+.models-input-wrap{border-top:1px solid var(--border);padding:1rem 1.5rem;background:oklch(0.135 0.005 60/0.95);flex-shrink:0}
+.quick-prompts{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
+.quick-prompt{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:13px;color:var(--fg-muted);transition:all 0.15s;line-height:1.4}
+.quick-prompt:hover{border-color:var(--orange-border);color:var(--fg);background:var(--surface-elevated)}
+.model-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:10px}
+.model-card-name{font-family:var(--font-display);font-size:15px;font-weight:500;margin-bottom:3px}
+.model-card-src{font-family:var(--font-mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
+.model-card-desc{font-size:13px;color:var(--fg-muted);line-height:1.6;margin-bottom:10px}
+.model-card-section{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--fg-muted);margin-bottom:4px;margin-top:10px}
+.model-card-body{font-size:12px;color:var(--fg-muted);line-height:1.55}
+.model-use-btn{margin-top:10px;background:var(--orange-muted);border:1px solid var(--orange-border);color:var(--orange);border-radius:calc(var(--radius) - 2px);padding:6px 14px;font-size:12px;cursor:pointer;font-family:var(--font-body);transition:all 0.15s}
+.model-use-btn:hover{background:var(--orange);color:var(--orange-fg)}
+
+/* HISTORY */
+.history-wrap{max-width:52rem;margin:0 auto;padding:3rem 2rem}
+.history-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;cursor:pointer;transition:border-color 0.15s;margin-bottom:10px;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:start}
+.history-row:hover{border-color:var(--border-mid)}
+.history-row-title{font-family:var(--font-display);font-size:15px;font-weight:500;margin-bottom:4px}
+.history-row-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.badge{font-family:var(--font-mono);font-size:10px;padding:2px 9px;border-radius:99px;letter-spacing:0.04em}
+.badge-type{background:var(--secondary);color:var(--fg-muted)}
+.badge-path{background:var(--orange-muted);color:var(--orange)}
+.history-row-detail{font-size:12px;color:var(--fg-muted);line-height:1.6}
+.history-row-date{font-family:var(--font-mono);font-size:11px;color:var(--fg-muted)}
+.history-empty{text-align:center;padding:5rem 2rem}
+.history-empty-title{font-family:var(--font-display);font-size:1.4rem;font-weight:500;margin-bottom:0.5rem}
+.history-empty-sub{font-size:14px;color:var(--fg-muted);margin-bottom:2rem}
+
+@media(max-width:640px){
+  .type-grid{grid-template-columns:repeat(3,1fr)}
+  .paths-grid,.rec-meta-grid{grid-template-columns:1fr}
+  .principles-grid{grid-template-columns:repeat(2,1fr)}
+  .capability-grid{grid-template-columns:1fr}
+  .models-sidebar{display:none}
+  .mode-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-left" onclick="showScreen('home')">
+    <svg class="nav-logo" viewBox="0 0 474 474" xmlns="http://www.w3.org/2000/svg">
+      <defs><radialGradient id="og2" cx="35%" cy="30%" r="72%"><stop offset="0%" stop-color="#f0a060"/><stop offset="100%" stop-color="#c85a1a"/></radialGradient></defs>
+      <circle cx="237" cy="237" r="210" fill="none" stroke="url(#og2)" stroke-width="40"/>
+      <circle cx="237" cy="237" r="138" fill="none" stroke="url(#og2)" stroke-width="36"/>
+    </svg>
+    <div class="nav-wordmark">
+      <span class="nav-title">Decision Modeler</span>
+      <span class="nav-kicker">Executive Strategic Tool</span>
+    </div>
+  </a>
+  <div class="nav-center">
+    <button class="nav-link" onclick="showScreen('chat')">Partner Chat</button>
+    <button class="nav-link" onclick="showScreen('models')">Thinking Models</button>
+    <button class="nav-link" onclick="showScreen('history')">History</button>
+  </div>
+  <button class="nav-cta" onclick="startDecision()">Start a Decision</button>
+</nav>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="home-hero">
+    <div class="hero-chip"><div class="hero-chip-dot"></div><span class="hero-chip-text">For Jesse Godfrey · Executive Creative Director</span></div>
+    <h1 class="hero-headline">A strategic decision tool that <span class="accent">protects standards</span> and accelerates clarity.</h1>
+    <p class="hero-sub">Translate creative, brand, strategic, and people decisions into structured calls — with bias checks, scoring, and a one-page summary you can defend in any room.</p>
+    <div class="hero-ctas">
+      <button class="btn btn-orange" onclick="startDecision()">Start a Decision</button>
+      <button class="btn btn-outline" onclick="showScreen('history')">Open Decision History</button>
+    </div>
+  </div>
+
+  <div class="hairline"></div>
+
+  <div class="capability-grid">
+    <div class="capability-card" onclick="startDecision()">
+      <span class="cap-num">01</span>
+      <div class="cap-title">Guided Decision Flow</div>
+      <p class="cap-desc">A 7-step framework: define the call, generate three viable paths, score them against brand and execution, run bias checks, and recommend.</p>
+      <span class="cap-link">Start the flow →</span>
+    </div>
+    <div class="capability-card" onclick="showScreen('chat')">
+      <span class="cap-num">02</span>
+      <div class="cap-title">Strategic Partner Chat</div>
+      <p class="cap-desc">A sharp conversational partner. It asks first, organizes the decision, and surfaces blind spots before answering. Never preachy.</p>
+      <span class="cap-link">Open chat →</span>
+    </div>
+    <div class="capability-card" onclick="showScreen('models')">
+      <span class="cap-num">03</span>
+      <div class="cap-title">Thinking Models Library</div>
+      <p class="cap-desc">Find the right Krogerus & Tschäppeler model for the situation — Eisenhower, Rubber Band, Pareto, Swiss Cheese, and more.</p>
+      <span class="cap-link">Browse models →</span>
+    </div>
+  </div>
+
+  <div class="hairline"></div>
+
+  <div class="principles-section">
+    <div class="principles-header">
+      <div class="eyebrow">Operating Principles</div>
+      <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:500;letter-spacing:-0.02em">Five rules this tool will hold you to.</h2>
+    </div>
+    <div class="principles-grid">
+      <div class="principle-item"><span class="principle-code">P/01</span><div class="principle-text">Widen the path before committing.</div></div>
+      <div class="principle-item"><span class="principle-code">P/02</span><div class="principle-text">Separate true standards from personal control.</div></div>
+      <div class="principle-item"><span class="principle-code">P/03</span><div class="principle-text">Delegate before over-owning.</div></div>
+      <div class="principle-item"><span class="principle-code">P/04</span><div class="principle-text">Name the tradeoff.</div></div>
+      <div class="principle-item"><span class="principle-code">P/05</span><div class="principle-text">Protect brand, strategy, and execution quality.</div></div>
+    </div>
+  </div>
+
+  <div class="hairline"></div>
+  <footer class="home-footer">
+    <span class="footer-left">Decision Modeler · Built for clarity over inspiration.</span>
+    <span class="footer-right">Widen the path before committing.</span>
+  </footer>
+</div>
+
+<!-- DECIDE -->
+<div class="screen" id="screen-decide">
+  <div class="flow-wrap" id="flow-wrap"></div>
+</div>
+
+<!-- CHAT -->
+<div class="screen" id="screen-chat">
+  <div class="chat-wrap">
+    <div class="chat-mode-bar">
+      <span style="font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);letter-spacing:0.1em;text-transform:uppercase;align-self:center;margin-right:6px">Mode</span>
+      <button class="chat-mode-chip active" onclick="setChatMode(this,'fast')">Fast Read</button>
+      <button class="chat-mode-chip" onclick="setChatMode(this,'full')">Full Walkthrough</button>
+      <button class="chat-mode-chip" onclick="setChatMode(this,'challenge')">Challenge My Thinking</button>
+      <button class="chat-mode-chip" onclick="setChatMode(this,'draft')">Draft Communication</button>
+    </div>
+    <div class="chat-messages" id="chat-msgs">
+      <div class="msg-wrap assistant">
+        <div class="msg-bubble"><strong>Decision Modeler</strong><br><br>What decision are you working on?<br><br>Give me the situation. I'll ask a few sharp questions before recommending anything — that's the deal.</div>
+        <span class="msg-time">Ready</span>
+      </div>
+    </div>
+    <div class="chat-input-wrap">
+      <div class="chat-input-inner">
+        <div class="chat-input-row">
+          <textarea class="chat-ta" id="chat-ta" rows="1" placeholder="Describe the decision or situation..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}" oninput="autoH(this)"></textarea>
+          <button class="chat-send" onclick="sendMsg()">↑</button>
+        </div>
+        <div class="chat-disclaimer">Connected to Claude · Calibrated to Jesse Godfrey's decision profile</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODELS -->
+<div class="screen" id="screen-models">
+  <div class="models-wrap">
+    <aside class="models-sidebar">
+      <div class="models-sidebar-head">
+        <div class="models-sidebar-title">Thinking Models</div>
+        <div class="models-sidebar-sub">Krogerus & Tschäppeler · The Decision Book · 50 models for strategic thinking</div>
+      </div>
+      <div class="models-tabs">
+        <button class="models-tab active" onclick="setModelsTab('recommend',this)">Recommend</button>
+        <button class="models-tab" onclick="setModelsTab('browse',this)">Browse Library</button>
+      </div>
+      <div class="models-cat-list" id="models-cats">
+        <div class="models-cat-label">Quick situations</div>
+        <div class="models-cat-item" onclick="triggerQuick('Everything feels like priority one this week.')"><span class="models-cat-name">Everything's priority one</span></div>
+        <div class="models-cat-item" onclick="triggerQuick('I keep relitigating a call I already made.')"><span class="models-cat-name">Relitigating a past call</span></div>
+        <div class="models-cat-item" onclick="triggerQuick('I\'m overcontrolling a project the team should own.')"><span class="models-cat-name">Overcontrolling a project</span></div>
+        <div class="models-cat-item" onclick="triggerQuick('I\'m tempted to pivot rather than push through.')"><span class="models-cat-name">Tempted to pivot vs. push</span></div>
+        <div class="models-cat-label" style="margin-top:8px">By category</div>
+        <div class="models-cat-item" onclick="filterModelCat('all',this)"><span class="models-cat-name">All models</span><span class="models-cat-count">12</span></div>
+        <div class="models-cat-item" onclick="filterModelCat('deciding',this)"><span class="models-cat-name">Making a decision</span><span class="models-cat-count">5</span></div>
+        <div class="models-cat-item" onclick="filterModelCat('improving',this)"><span class="models-cat-name">Improving yourself</span><span class="models-cat-count">3</span></div>
+        <div class="models-cat-item" onclick="filterModelCat('others',this)"><span class="models-cat-name">Understanding others</span><span class="models-cat-count">2</span></div>
+        <div class="models-cat-item" onclick="filterModelCat('change',this)"><span class="models-cat-name">Navigating change</span><span class="models-cat-count">2</span></div>
+      </div>
+    </aside>
+    <div class="models-main">
+      <div class="models-chat-wrap" id="models-main-content"></div>
+      <div class="models-input-wrap" id="models-input-wrap">
+        <div class="chat-input-row">
+          <textarea class="chat-ta" id="models-ta" rows="1" placeholder="Describe your situation or ask about a specific model..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendModels()}" oninput="autoH(this)"></textarea>
+          <button class="chat-send" onclick="sendModels()">↑</button>
+        </div>
+        <div class="chat-disclaimer">References Krogerus & Tschäppeler · The Decision Book · Plus broader strategic frameworks</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="screen" id="screen-history">
+  <div class="history-wrap">
+    <div class="eyebrow">Decision History</div>
+    <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:500;letter-spacing:-0.02em;margin-bottom:1.75rem">Saved decisions</h2>
+    <div id="history-list"></div>
+  </div>
+</div>
+
+<script>
+const JESSE = `Name: Jesse Godfrey
+Role: Executive Creative Director, University Relations, Clemson University
+
+ROLE CONTEXT:
+- 50% Artistic and Creative Management
+- 25% Brand Development and Management
+- 15% Strategic Management
+- 10% Lead Designer and team mentor
+Decisions cannot be judged on creativity alone. They must balance brand integrity, strategic clarity, execution quality, and team sustainability.
+
+CORE PATTERN:
+High-standards builder. Decisive, persistent, structured, accountable. Future-oriented and vision-led; the future must become real through disciplined execution. Leads by example and craft credibility. Comfortable making hard calls when quality, standards, or strategic coherence are at stake.
+
+ASSESSMENT SIGNAL:
+- DISC natural: moderately high D, lower I, high S, moderate-high C.
+- DISC adaptive shift: environment pulling toward more outwardly communicative, visibly optimistic, detail-conscious public-facing leadership. That flex is a cost.
+- CliftonStrengths top: Achiever, Strategic, Belief, Learner, Significance, Focus, Discipline, Communication, Futuristic, Competition.
+- AQ Novelist: proactive self-authored change, frustrated by chaos, interruption, and change imposed by others.
+- PI Self-Concept: Artisan framing with visible tension between natural preferences and environmental demands.
+
+AT BEST: strategic creative operator, brand guardian, system-builder, leader who wants work to mean something, mentor who respects competence and accountability.
+
+UNDER STRAIN:
+- Over-controls instead of delegates
+- Turns too many things into top priority
+- Becomes blunt when standards slip
+- Resists externally imposed change before testing its value
+- Backs preferred solution too early and narrows the field
+- Pivots to escape frustration rather than persevere through messy middle phases
+
+BEHAVIOR RULES FOR THE ASSISTANT:
+- Push back. Don't flatter. If his framing is weak, say so plainly.
+- Default to asking 3-7 sharp questions before recommending anything.
+- Be specific to what he just said — never generic advice.
+- Short paragraphs, tight structure. Name the tradeoff. End with a clarifying question or a concrete next move.
+- When you sense overcontrol, false urgency, early lock-in, resistance to imposed change, or over-owning: name it directly and ask one question that opens the field back up.
+- Prefer clarity over inspiration. Always name the tradeoff.
+
+EVALUATION CRITERIA:
+Brand integrity (25), Strategic impact (20), Creative power (20), Executability (15), Quality control (10), Team leverage (10).`;
+
+const SYSTEM_PARTNER = `You are Decision Modeler, a strategic decision partner for Jesse Godfrey.
+
+${JESSE}
+
+Help Jesse clarify the real decision, define the desired outcome, identify non-negotiables, generate three viable paths (Safe / Bold / Balanced), compare them, surface likely blind spots, choose the right decision mode (Direct / Collaborative / Experimental / Delegated), name the tradeoff, and move to action.
+
+No emojis. Short paragraphs. Markdown headers/bullets when useful. Always end with either a clarifying question or a concrete next move. Never give five bullet points of generic advice.`;
+
+const SYSTEM_MODELS = `You are a strategic thinking model advisor for Jesse Godfrey, Executive Creative Director at Clemson.
+
+Your role is to identify the most relevant decision-making or strategic thinking models for Jesse's specific situation, drawing primarily from Krogerus and Tschäppeler's "The Decision Book: 50 Models for Strategic Thinking" (paraphrased only — never reproduce copyrighted text).
+
+Key models you know well:
+DECIDING: Eisenhower Matrix (urgent/important), Rubber Band Model (two opposing pulls), Consequence Model (short vs long-term), Morphological Box (dimensions + combinations), SWOT Analysis, 5 Whys / Simon Sinek's Why-How-What, Black Swan Model, BCG Matrix, Pareto Principle, Long Tail, Crossroads Model, Gap Analysis, Thinking Hats (de Bono), Rubicon Model (decision vs. implementation), Swiss Cheese Model (risk layers)
+IMPROVING: Flow Model (Csikszentmihalyi), Johari Window, Personal Performance Model, Maslow applied to professional life, Ikigai, Saboteur Model, Networking Target Model, Kolb's Learning Cycle
+OTHERS: Conflict Escalation Model, Dunbar Number, Double Loop Learning (Argyris), Transactional Analysis, Influence Model, Tuckman's Team Model, Status Games Model
+CHANGE: Sigmoid Curve, Change Curve (Kübler-Ross adapted), Innovation Adoption Curve (Rogers), Disruptive Innovation (Christensen), Blue Ocean Strategy, Cynefin Framework, Scenario Planning, First Principles Thinking, Pivot Model
+
+Jesse's context: Executive creative director — brand, strategy, creativity, execution, people. Blind spots: overcontrol, early lock-in, resisting externally-imposed change.
+
+Behavior:
+- Ask 1-2 focused questions to understand the situation before suggesting models
+- Then recommend 2-3 specific models by name with clear explanations (paraphrased, never copied)
+- Explain WHAT the model is, WHY it fits this situation, and HOW to run it concisely
+- Always name the one model you'd start with and why
+- Offer to walk through the model step by step
+- Reference "The Decision Book" by Krogerus & Tschäppeler when citing those models
+- No emojis.`;
+
+const SYSTEM_PATHS = `You are Jesse's strategic decision partner. Generate three viable paths for the decision below. Be specific to the actual decision, not generic.
+Path A = Safe/Standards-preserving, Path B = Bold/Future-shaping, Path C = Balanced/Scalable.
+Return ONLY a raw JSON array of 3 objects, no markdown, no explanation:
+[{"id":"A","label":"Safe","title":"...","description":"...","upside":"...","risk":"...","scores":{"brandIntegrity":3,"strategicImpact":3,"creativePower":3,"executability":3,"qualityControl":3,"teamLeverage":3}}]
+Each score is 1-5. title ≤6 words. description 2 sentences. upside 1 sentence. risk 1 sentence.`;
+
+const WEIGHTS = {brandIntegrity:25,strategicImpact:20,creativePower:20,executability:15,qualityControl:10,teamLeverage:10};
+const CRIT_META = [
+  {key:'brandIntegrity',name:'Brand integrity',weight:25,desc:"Does this path protect and extend Clemson's brand identity, voice, and consistency — without becoming rigid where flexibility serves quality?"},
+  {key:'strategicImpact',name:'Strategic impact',weight:20,desc:'Does this path move the institution where it needs to go long-term? Does it create compounding advantage or just visible activity?'},
+  {key:'creativePower',name:'Creative power',weight:20,desc:'Is the creative output distinctive, compelling, and scalable across channels without losing integrity?'},
+  {key:'executability',name:'Executability',weight:15,desc:'Can the team deliver this well with current capacity? Does it respect bandwidth, timelines, and realistic skill levels?'},
+  {key:'qualityControl',name:'Quality control',weight:10,desc:'Can this path be held to a high standard end-to-end? Does it build in checkpoints where quality drift would be expensive?'},
+  {key:'teamLeverage',name:'Team leverage',weight:10,desc:'Does this path build team capability, trust, and momentum — or does it concentrate all execution on you?'},
+];
+
+let decisions = JSON.parse(localStorage.getItem('jdm_decisions_v1')||'[]');
+let draft = JSON.parse(localStorage.getItem('jdm_draft_v1')||'null') || {step:1,type:'',define:{decision:'',outcome:'',nonNeg:'',failureCost:'',timeline:''},context:{stakeholders:'',options:'',leaning:'',urgency:'',stuck:''},paths:null,scores:null,biases:{},mode:'',recommendation:null};
+let chatHistory = [];
+let modelsHistory = [];
+let chatMode = 'fast';
+let modelsTab = 'recommend';
+let modelFilter = 'all';
+
+// ── NAV ──
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  const map={chat:0,models:1,history:2};
+  if(map[name]!==undefined) document.querySelectorAll('.nav-link')[map[name]].classList.add('active');
+  if(name==='history') renderHistory();
+  if(name==='models') initModels();
+}
+
+// ── FLOW ──
+function startDecision() {
+  draft={step:1,type:'',define:{decision:'',outcome:'',nonNeg:'',failureCost:'',timeline:''},context:{stakeholders:'',options:'',leaning:'',urgency:'',stuck:''},paths:null,scores:null,biases:{},mode:'',recommendation:null};
+  saveDraft(); showScreen('decide'); renderStep();
+}
+
+function saveDraft(){localStorage.setItem('jdm_draft_v1',JSON.stringify(draft))}
+
+function renderStep(){
+  const w=document.getElementById('flow-wrap');
+  const steps=['Type','Define','Context','Paths','Evaluate','Bias Checks','Recommend'];
+  const bars=steps.map((_,i)=>`<div class="step-bar ${i<draft.step-1?'done':i===draft.step-1?'active':''}"></div>`).join('');
+  let body='';
+  switch(draft.step){
+    case 1: body=step1(); break;
+    case 2: body=step2(); break;
+    case 3: body=step3(); break;
+    case 4: body=step4(); break;
+    case 5: body=step5(); break;
+    case 6: body=step6(); break;
+    case 7: body=step7(); break;
+  }
+  w.innerHTML=`<div class="step-progress">${bars}</div>
+  <div class="step-meta"><div class="eyebrow-muted">Step ${draft.step} of 7</div><div class="eyebrow">${steps[draft.step-1]}</div></div>
+  ${body}`;
+  if(draft.step===4&&!draft.paths) genPaths();
+  if(draft.step===7&&!draft.recommendation) genRec();
+}
+
+function step1(){
+  const types=[{id:'creative',icon:'🎨',label:'Creative'},{id:'brand',icon:'◆',label:'Brand'},{id:'strategic',icon:'🧭',label:'Strategic'},{id:'people',icon:'👥',label:'People'},{id:'process',icon:'⚙️',label:'Process'}];
+  return `<div class="step-title-text">What kind of decision is this?</div>
+  <div class="type-grid">${types.map(t=>`<button class="type-btn${draft.type===t.id?' selected':''}" onclick="draft.type='${t.id}';saveDraft();renderStep()"><div class="type-icon">${t.icon}</div><div class="type-name">${t.label}</div></button>`).join('')}</div>
+  <div class="action-row"><button class="btn btn-orange" onclick="if(draft.type){draft.step=2;saveDraft();renderStep()}" ${!draft.type?'disabled':''}>Continue →</button></div>`;
+}
+
+function step2(){
+  const d=draft.define;
+  return `<div class="step-title-text">Define the decision</div>
+  <div class="form-group"><label class="form-label">What decision are you making? <span style="color:var(--orange)">*</span></label><div class="form-hint">State it precisely. Vague inputs produce vague paths.</div><textarea class="form-textarea" id="f-dec" placeholder="e.g. Whether to redesign our brand standards guide from scratch or update the existing one.">${d.decision}</textarea></div>
+  <div class="form-group"><label class="form-label">What outcome matters most? <span style="color:var(--orange)">*</span></label><div class="form-hint">What does success look like 90 days from now?</div><textarea class="form-textarea" id="f-out" placeholder="e.g. A standards guide the team follows without constant correction.">${d.outcome}</textarea></div>
+  <div class="form-group"><label class="form-label">What cannot be compromised?</label><input class="form-input" id="f-nn" value="${d.nonNeg}" placeholder="Brand standards, timelines, key relationships…"></div>
+  <div class="form-group"><label class="form-label">What happens if this goes wrong?</label><div class="form-hint">Name the real cost — not the theoretical one.</div><input class="form-input" id="f-fc" value="${d.failureCost}" placeholder="e.g. Brand inconsistency compounds for another 18 months."></div>
+  <div class="form-group"><label class="form-label">Decision deadline</label><input class="form-input" id="f-tl" value="${d.timeline}" placeholder="When does this need to land?"></div>
+  <div class="action-row"><button class="btn btn-ghost" onclick="draft.step=1;renderStep()">← Back</button><button class="btn btn-orange" onclick="saveStep2()">Continue →</button></div>`;
+}
+
+function saveStep2(){
+  draft.define.decision=document.getElementById('f-dec').value.trim();
+  draft.define.outcome=document.getElementById('f-out').value.trim();
+  draft.define.nonNeg=document.getElementById('f-nn').value;
+  draft.define.failureCost=document.getElementById('f-fc').value;
+  draft.define.timeline=document.getElementById('f-tl').value;
+  if(!draft.define.decision||!draft.define.outcome){alert('Decision and outcome are required.');return;}
+  draft.step=3;saveDraft();renderStep();
+}
+
+function step3(){
+  const c=draft.context;
+  const urg=['Low','Medium','High'];
+  return `<div class="step-title-text">Context</div>
+  <div class="form-group"><label class="form-label">Key stakeholders <span style="color:var(--orange)">*</span></label><div class="form-hint">Who is affected? Who needs buy-in? Who holds veto power?</div><input class="form-input" id="f-sh" value="${c.stakeholders}" placeholder="VP, team leads, external partners…"></div>
+  <div class="form-group"><label class="form-label">Options already on the table</label><textarea class="form-textarea" id="f-op" placeholder="What's already under consideration? Even rough options count.">${c.options}</textarea></div>
+  <div class="form-group"><label class="form-label">Where are you currently leaning?</label><div class="form-hint">Be honest. This helps surface early lock-in — one of your documented blind spots.</div><input class="form-input" id="f-le" value="${c.leaning}" placeholder="e.g. Leaning toward Option A because…"></div>
+  <div class="form-group"><label class="form-label">Urgency</label><div class="urgency-row">${urg.map(u=>`<button class="urgency-btn${c.urgency===u?' selected':''}" onclick="draft.context.urgency='${u}';saveDraft();renderStep()">${u}</button>`).join('')}</div></div>
+  <div class="form-group"><label class="form-label">What feels stuck or frustrating?</label><div class="form-hint">Where is the real friction? What keeps you from deciding now?</div><textarea class="form-textarea" id="f-st" placeholder="e.g. Can't get alignment on what quality actually means here.">${c.stuck}</textarea></div>
+  <div class="action-row"><button class="btn btn-ghost" onclick="draft.step=2;renderStep()">← Back</button><button class="btn btn-orange" onclick="saveStep3()">Generate Three Paths →</button></div>`;
+}
+
+function saveStep3(){
+  draft.context.stakeholders=document.getElementById('f-sh').value.trim();
+  draft.context.options=document.getElementById('f-op').value;
+  draft.context.leaning=document.getElementById('f-le').value;
+  draft.context.stuck=document.getElementById('f-st').value;
+  if(!draft.context.stakeholders){alert('Stakeholders are required.');return;}
+  draft.paths=null;draft.step=4;saveDraft();renderStep();
+}
+
+function step4(){
+  const paths=draft.paths;
+  if(!paths) return `<div class="step-title-text">Generating three paths…</div><div style="padding:3rem 0;text-align:center"><div class="ld"><div class="ld-dot"></div><div class="ld-dot"></div><div class="ld-dot"></div></div><p style="margin-top:14px;font-size:13px;color:var(--fg-muted)">Analyzing your inputs and building Safe, Bold, and Balanced paths…</p></div>`;
+  const cls=['path-a','path-b','path-c'];
+  return `<div class="step-title-text">Three viable paths</div>
+  <p style="font-size:13px;color:var(--fg-muted);margin-bottom:1.25rem">Your Strategic strength is strongest when comparing paths — not defending the first strong one.</p>
+  <div class="paths-grid">${paths.map((p,i)=>`<div class="path-card ${cls[i]}">
+    <div class="path-label">Path ${p.id} · ${p.label}</div>
+    <div class="path-card-title">${p.title}</div>
+    <div class="path-card-desc">${p.description}</div>
+    <div class="path-updown"><strong>Upside:</strong> ${p.upside}<br><strong>Risk:</strong> ${p.risk}</div>
+  </div>`).join('')}</div>
+  <div class="action-row"><button class="btn btn-ghost" onclick="draft.step=3;renderStep()">← Back</button><button class="btn btn-orange" onclick="draft.step=5;renderStep()">Build Scorecard →</button></div>`;
+}
+
+function step5(){
+  const paths=draft.paths||[];
+  if(!draft.scores) draft.scores=paths.map(p=>({...p.scores}));
+  const totals=draft.scores.map(s=>Math.round(Object.entries(WEIGHTS).reduce((sum,[k,w])=>(sum+(s[k]||3)*w),0)/5));
+  const maxIdx=totals.indexOf(Math.max(...totals));
+  return `<div class="step-title-text">Score the options</div>
+  <p style="font-size:13px;color:var(--fg-muted);margin-bottom:1.25rem">Rate each path 1–5. Each criterion is weighted differently — read the descriptions before scoring.</p>
+  <div class="scorecard">
+    <div class="sc-head"><div class="sc-head-cell" style="text-align:left">Criterion</div><div class="sc-head-cell">Path A</div><div class="sc-head-cell">Path B</div><div class="sc-head-cell">Path C</div></div>
+    ${CRIT_META.map((c,i)=>`<div class="sc-row">
+      <div><div class="sc-crit-name">${c.name}</div><div class="sc-crit-weight">Weight: ${c.weight} · max ${c.weight*5} pts</div><div class="sc-crit-desc">${c.desc}</div></div>
+      ${[0,1,2].map(pi=>`<div class="sc-cell"><select class="sc-select" onchange="draft.scores[${pi}]['${c.key}']=parseInt(this.value);saveDraft();renderStep()">${[1,2,3,4,5].map(v=>`<option${(draft.scores[pi][c.key]||3)===v?' selected':''}>${v}</option>`).join('')}</select></div>`).join('')}
+    </div>`).join('')}
+    <div class="sc-total"><div class="sc-total-label">Weighted total (max 100)</div>${totals.map((t,i)=>`<div class="sc-total-val${i===maxIdx?' winner':''}">${t}</div>`).join('')}</div>
+  </div>
+  <div class="action-row"><button class="btn btn-ghost" onclick="draft.step=4;renderStep()">← Back</button><button class="btn btn-orange" onclick="draft.step=6;renderStep()">Run Bias Checks →</button></div>`;
+}
+
+function step6(){
+  const checks=[
+    {key:'control',q:'Am I holding this because it truly needs my judgment — or because I trust my own standards more than others\'?',flag:'Your DISC profile shows reluctance to delegate sufficiently. High standards are real. The question is whether this decision actually needs your final hand.'},
+    {key:'change',q:'Am I resisting this because it\'s wrong — or because I didn\'t design it?',flag:'Your AQ Novelist pattern means externally imposed change can feel threatening before you\'ve tested whether it\'s actually a problem. Ask: objectively bad, or just unfamiliar?'},
+    {key:'priority',q:'Is this truly priority one right now — or just the loudest?',flag:'DISC data shows you make too many things priority #1 simultaneously. What\'s being crowded out by elevating this decision right now?'},
+    {key:'people',q:'Have I made the why clear enough for others to own execution?',flag:'Your natural style is to lead by doing and demonstrating — not delegating and assigning. Have you given enough context for someone else to execute this with real ownership?'},
+  ];
+  return `<div class="step-title-text">Bias checks</div>
+  <p style="font-size:13px;color:var(--fg-muted);margin-bottom:1.25rem">Be honest. This is the part of the tool that pays for itself. A "yes" doesn't block the decision — it means slow down by one step.</p>
+  <div class="bias-grid">${checks.map(c=>`<div class="bias-card">
+    <div class="bias-q">${c.q}</div>
+    <div class="bias-flag">${c.flag}</div>
+    <div class="bias-btns">
+      <button class="bias-btn${draft.biases[c.key]==='yes'?' yes':''}" onclick="draft.biases['${c.key}']='yes';saveDraft();renderStep()">Yes — worth examining</button>
+      <button class="bias-btn${draft.biases[c.key]==='no'?' no':''}" onclick="draft.biases['${c.key}']='no';saveDraft();renderStep()">No — I'm clear here</button>
+    </div>
+  </div>`).join('')}</div>
+  <div class="action-row"><button class="btn btn-ghost" onclick="draft.step=5;renderStep()">← Back</button><button class="btn btn-orange" onclick="draft.step=7;draft.recommendation=null;saveDraft();renderStep()">Get Recommendation →</button></div>`;
+}
+
+function step7(){
+  const rec=draft.recommendation;
+  const modes=[{id:'Direct',desc:'Brand risk high, time tight'},{id:'Collaborative',desc:'Buy-in critical'},{id:'Experimental',desc:'Path unclear, test first'},{id:'Delegated',desc:'Team growth opportunity'}];
+  if(!rec) return `<div class="step-title-text">Recommendation</div><div style="padding:3rem 0;text-align:center"><div class="ld"><div class="ld-dot"></div><div class="ld-dot"></div><div class="ld-dot"></div></div><p style="margin-top:14px;font-size:13px;color:var(--fg-muted)">Analyzing inputs, scorecard, and bias flags…</p></div>`;
+  return `<div class="step-title-text">Recommendation</div>
+  <div class="rec-hero">
+    <div class="rec-path-label">Recommended path</div>
+    <div class="rec-path-title">${rec.path}</div>
+    <div class="rec-why">${rec.why}</div>
+  </div>
+  <div style="margin-bottom:1.1rem">
+    <div class="eyebrow-muted" style="margin-bottom:8px">Decision mode</div>
+    <div class="mode-grid">${modes.map(m=>`<div class="mode-btn${draft.mode===m.id?' selected':''}" onclick="draft.mode='${m.id}';saveDraft();renderStep()"><div class="mode-btn-name">${m.id}</div><div class="mode-btn-desc">${m.desc}</div></div>`).join('')}</div>
+  </div>
+  <div class="rec-meta-grid">
+    <div class="rec-meta-card"><div class="rec-meta-label">Tradeoff accepted</div><div class="rec-meta-val">${rec.tradeoff}</div></div>
+    <div class="rec-meta-card"><div class="rec-meta-label">Next move</div><div class="rec-meta-val">${rec.next}</div></div>
+    <div class="rec-meta-card"><div class="rec-meta-label">Owner</div><div class="rec-meta-val">${rec.owner}</div></div>
+  </div>
+  ${rec.say?`<div class="say-it"><div class="say-it-label">Say it like this</div><div class="say-it-text">"${rec.say}"</div></div>`:''}
+  <div class="action-row"><button class="btn btn-ghost" onclick="draft.step=6;renderStep()">← Back</button><button class="btn btn-orange" onclick="saveDecision()">Save Decision</button><button class="btn btn-ghost" onclick="startDecision()">New Decision</button></div>`;
+}
+
+async function genPaths(){
+  const prompt=`Decision type: ${draft.type}\nDecision: ${draft.define.decision}\nDesired outcome: ${draft.define.outcome}\nNon-negotiables: ${draft.define.nonNeg}\nCurrent leaning: ${draft.context.leaning}\nWhat's stuck: ${draft.context.stuck}\nStakeholders: ${draft.context.stakeholders}`;
+  try{
+    const r=await apiCall([{role:'user',content:prompt}],SYSTEM_PATHS,1200);
+    draft.paths=JSON.parse(r.replace(/```json|```/g,'').trim());
+  }catch(e){
+    draft.paths=[
+      {id:'A',label:'Safe',title:'Maintain current standard',description:'Continue with the existing approach, tightening quality controls and documentation. Apply your established framework without major deviation.',upside:'Protects brand consistency and minimizes execution risk.',risk:'May miss a strategic window to advance the work.',scores:{brandIntegrity:5,strategicImpact:2,creativePower:2,executability:5,qualityControl:5,teamLeverage:3}},
+      {id:'B',label:'Bold',title:'Reset the direction entirely',description:'Step back and redesign the approach from first principles. Commit to the direction that best serves the institution long-term.',upside:'Creates the compounding strategic advantage you are looking for.',risk:'Requires significant time, energy, and political capital.',scores:{brandIntegrity:3,strategicImpact:5,creativePower:5,executability:2,qualityControl:3,teamLeverage:3}},
+      {id:'C',label:'Balanced',title:'Staged commitment with review',description:'Commit to a defined first phase, evaluate results against clear criteria, then decide next. Build evidence before full investment.',upside:'Reduces risk while still moving. Creates a structured learning loop.',risk:'Can feel inconclusive to stakeholders expecting a definitive call.',scores:{brandIntegrity:4,strategicImpact:4,creativePower:3,executability:4,qualityControl:4,teamLeverage:4}}
+    ];
+  }
+  saveDraft();renderStep();
+}
+
+async function genRec(){
+  const paths=draft.paths||[];
+  const scores=draft.scores||[];
+  const totals=scores.map(s=>Math.round(Object.entries(WEIGHTS).reduce((sum,[k,w])=>(sum+(s[k]||3)*w),0)/5));
+  const maxIdx=totals.indexOf(Math.max(...totals));
+  const flags=Object.entries(draft.biases).filter(([,v])=>v==='yes').map(([k])=>k).join(', ')||'none';
+  const prompt=`Decision: ${draft.define.decision}
+Type: ${draft.type}
+Outcome: ${draft.define.outcome}
+Non-negotiables: ${draft.define.nonNeg}
+Path A: ${paths[0]?.title} — ${paths[0]?.description}
+Path B: ${paths[1]?.title} — ${paths[1]?.description}
+Path C: ${paths[2]?.title} — ${paths[2]?.description}
+Weighted scores (0-100): A=${totals[0]}, B=${totals[1]}, C=${totals[2]}
+Bias flags (yes = worth examining): ${flags}
+
+Return raw JSON (no markdown): {"path":"Path X — Label · Title","why":"2-3 sentences","tradeoff":"We are choosing X over Y","next":"single next action sentence","owner":"who owns execution","say":"We're going to…"}`;
+  try{
+    const r=await apiCall([{role:'user',content:prompt}],SYSTEM_PARTNER+'\n\nReturn ONLY raw JSON, no markdown, no explanation.',700);
+    draft.recommendation=JSON.parse(r.replace(/```json|```/g,'').trim());
+  }catch(e){
+    draft.recommendation={path:'Path C — Balanced · Staged commitment with review',why:'The scorecard and context favor a phased approach. Given active bias flags, building in a review point creates the structural check you need before full commitment.',tradeoff:'We are choosing measured progress over decisive speed.',next:'Define the first phase scope, success criteria, and timeline with the team this week.',owner:'Jesse with team leads holding phase execution',say:"We're going to move forward in a defined first phase, review what we learn against clear criteria, and commit to the full direction from there."};
+  }
+  saveDraft();renderStep();
+}
+
+function saveDecision(){
+  const rec=draft.recommendation;
+  if(!rec){alert('No recommendation yet.');return;}
+  const d={id:crypto.randomUUID(),createdAt:new Date().toISOString(),title:draft.define.decision.slice(0,80)||'Unnamed decision',type:draft.type,define:{...draft.define},context:{...draft.context},paths:draft.paths,scores:draft.scores,biases:{...draft.biases},mode:draft.mode||'Direct',recommendation:rec};
+  decisions.unshift(d);
+  localStorage.setItem('jdm_decisions_v1',JSON.stringify(decisions));
+  draft={step:1,type:'',define:{decision:'',outcome:'',nonNeg:'',failureCost:'',timeline:''},context:{stakeholders:'',options:'',leaning:'',urgency:'',stuck:''},paths:null,scores:null,biases:{},mode:'',recommendation:null};
+  saveDraft();
+  showScreen('history');
+}
+
+// ── CHAT ──
+function setChatMode(btn,mode){
+  document.querySelectorAll('.chat-mode-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');chatMode=mode;
+}
+
+async function sendMsg(){
+  const ta=document.getElementById('chat-ta');
+  const text=ta.value.trim();if(!text)return;
+  ta.value='';ta.style.height='44px';
+  appendMsg('chat-msgs','user',text);
+  chatHistory.push({role:'user',content:text});
+  const lid=loadingMsg('chat-msgs');
+  const modeMap={fast:'Mode: Fast Read — be concise, limit to 1-2 follow-up questions.',full:'Mode: Full Walkthrough — use the complete 7-step Jesse Decision Model.',challenge:'Mode: Challenge My Thinking — push back hard, name blind spots directly and plainly.',draft:'Mode: Draft My Communication — help craft a clear, confident decision message for the team.'};
+  try{
+    const r=await apiCall(chatHistory,SYSTEM_PARTNER+'\n\n'+(modeMap[chatMode]||''),1000);
+    removeLoading(lid);appendMsg('chat-msgs','assistant',r);
+    chatHistory.push({role:'assistant',content:r});
+  }catch(e){removeLoading(lid);appendMsg('chat-msgs','assistant','Connection issue. Please try again.');}
+}
+
+// ── MODELS ──
+const DECISION_MODELS=[
+  {slug:'eisenhower',name:'The Eisenhower Matrix',cat:'deciding',oneLiner:'Separate what is urgent from what is important — they are not the same.',whenToUse:'When everything feels like it is on fire and you cannot tell what actually matters. Or when you are over-investing time in reactive work.',exercise:'Draw a 2×2: urgent/not urgent on one axis, important/not important on the other. Place every current demand into a quadrant. The top-right (important, not urgent) is where your leverage is. The bottom-right (urgent, not important) is where most of your reactive energy is going.',output:'A clear picture of where your time is going vs. where it should go.',source:'The Decision Book'},
+  {slug:'rubber-band',name:'The Rubber Band Model',cat:'deciding',oneLiner:'When two opposing forces both feel non-negotiable, the tension itself is the decision.',whenToUse:'When you feel pulled in two directions and cannot reconcile them — or when a decision keeps cycling without resolution.',exercise:'Name the two poles pulling you. On one end: what you want to move toward. On the other: what you cannot leave behind. The stretch between them is the productive zone. A decision snaps the tension — the question is whether the snap is intentional or accidental.',output:'Clarity on what is actually holding you back, and whether the constraint is real.',source:'The Decision Book'},
+  {slug:'consequence',name:'The Consequence Model',cat:'deciding',oneLiner:'Short-term and long-term consequences almost never align. Know which one you are optimizing.',whenToUse:'When you are tempted by the fast path, or when the right long-term move is politically uncomfortable in the short term.',exercise:'Map the decision against four quadrants: short-term positive, short-term negative, long-term positive, long-term negative. Where do your options land? The best decisions tolerate short-term discomfort for long-term gain.',output:'A clear-eyed tradeoff statement you can actually defend in a room.',source:'The Decision Book'},
+  {slug:'swot',name:'SWOT Analysis',cat:'deciding',oneLiner:'A structured audit of where you stand before you decide where to go.',whenToUse:'Before major strategic or brand decisions where you are not sure if you are working from a complete picture.',exercise:'Map Strengths, Weaknesses (internal) and Opportunities, Threats (external). Resist the urge to list everything — 3-4 per quadrant, real and specific. The insight is usually in the tension between a strength and a threat, or a weakness and an opportunity.',output:'A grounded starting point that prevents strategy built on wishful thinking.',source:'Standard framework'},
+  {slug:'pareto',name:'The Pareto Principle',cat:'deciding',oneLiner:'80% of your results come from 20% of your inputs. Know which 20%.',whenToUse:'When you are doing too much or spreading resources across too many initiatives.',exercise:'List your current projects, responsibilities, or decision candidates. Identify the 20% that generate the most strategic or brand value. Then ask: what would happen if you stopped doing everything else?',output:'A shorter list and a clearer sense of where to concentrate.',source:'The Decision Book'},
+  {slug:'flow',name:'The Flow Model',cat:'improving',oneLiner:'Peak performance lives in the zone between boredom and anxiety.',whenToUse:'When you or your team are underperforming or burning out — often two sides of the same problem.',exercise:'Map challenge level against skill level. Low challenge + high skill = boredom. High challenge + low skill = anxiety. The flow zone is where challenge is slightly above current skill. Ask: where are your key people sitting? Where are you?',output:'A calibration of where to raise the bar and where to reduce it — for yourself and for the team.',source:'Based on Csikszentmihalyi · referenced in The Decision Book'},
+  {slug:'johari',name:'The Johari Window',cat:'improving',oneLiner:'What you know about yourself vs. what others see is the gap that gets you in trouble.',whenToUse:'When you suspect your blind spots are affecting team dynamics, or when you keep getting feedback that surprises you.',exercise:'Four quadrants: Open (known to you and others), Blind (known to others, unknown to you), Hidden (known to you, hidden from others), Unknown (unknown to all). The goal is to shrink the Blind quadrant by soliciting honest input you would not normally receive.',output:'A sharper picture of where your self-perception and others\' experience are misaligned.',source:'The Decision Book'},
+  {slug:'saboteur',name:'The Saboteur Model',cat:'improving',oneLiner:'Identify the internal pattern that keeps getting in your own way.',whenToUse:"When the same problem keeps recurring despite your best efforts — and you suspect the pattern is you.",exercise:"Name the recurring situation where things go wrong. Ask: what do I tell myself in that moment that feels true but probably isn't? What do I do reflexively that makes it worse? Name the saboteur (e.g. 'the over-controller,' 'the perfectionist who can't delegate'). Name it to manage it.",output:'A named pattern you can catch in real time before it costs you.',source:'The Decision Book'},
+  {slug:'tuckman',name:"Tuckman's Team Model",cat:'others',oneLiner:'Teams are not immediately functional. Knowing which stage yours is in changes what leadership looks like.',whenToUse:'When a team is underperforming, in conflict, or newly formed.',exercise:"Identify whether your team is Forming (new, dependent), Storming (conflict and jockeying), Norming (aligning on process), or Performing (functional and autonomous). Each stage requires different leadership. Norming doesn't happen by accident — it requires explicit process and role clarity.",output:'A diagnosis of where the team is and what it actually needs from you right now.',source:'The Decision Book'},
+  {slug:'influence',name:'The Influence Model',cat:'others',oneLiner:'Understand the four levers that actually move people — not the ones that should.',whenToUse:'When you need stakeholder buy-in and persuasion is not landing, or when you are trying to understand why a decision is stalling.',exercise:'Map the key players against four levers: Role modeling (do they see leaders they respect doing this?), Conviction (do they believe it matters?), Skills (can they actually do it?), Formal mechanisms (does the system reward or punish the new behavior?). Usually one lever is broken.',output:'A targeted approach to the specific barrier — not a generic communication plan.',source:'Standard framework'},
+  {slug:'sigmoid',name:'The Sigmoid Curve',cat:'change',oneLiner:"The best time to change is before you need to — when things are still going well.",whenToUse:'When you are evaluating whether to reinvest in a current direction or begin transitioning to a new one.',exercise:"Map where your initiative, brand program, or team capability sits on the S-curve: early growth, peak, or beginning of decline. The key insight: starting a new curve while still on the upswing of the current one is painful but optimal. Waiting until decline forces the change is reactive and costly.",output:"A clear read on whether you are ahead of or behind the right inflection point.",source:'Based on Charles Handy · referenced in The Decision Book'},
+  {slug:'cynefin',name:'The Cynefin Framework',cat:'change',oneLiner:'Not all problems are the same kind of problem. The approach that works in one domain fails in another.',whenToUse:"When a decision feels stuck or when standard processes aren't producing results.",exercise:"Place the situation in one of four domains: Simple (clear cause-effect, apply best practice), Complicated (expert analysis needed, apply good practice), Complex (cause-effect only visible in retrospect — probe, sense, respond), Chaotic (act first to establish stability, then sense). Most creative and brand decisions live in Complex, not Complicated.",output:'A diagnosis of what kind of decision you are actually making — and therefore what decision-making approach is appropriate.',source:'Based on Snowden · referenced in strategic frameworks'}
+];
+
+function initModels(){
+  renderModelsMain();
+}
+
+function setModelsTab(tab,btn){
+  modelsTab=tab;
+  document.querySelectorAll('.models-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderModelsMain();
+}
+
+function filterModelCat(cat,el){
+  modelFilter=cat;
+  document.querySelectorAll('.models-cat-item').forEach(i=>i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  if(modelsTab==='browse') renderModelsMain();
+}
+
+function renderModelsMain(){
+  const wrap=document.getElementById('models-main-content');
+  const inputWrap=document.getElementById('models-input-wrap');
+  if(modelsTab==='recommend'){
+    inputWrap.style.display='';
+    if(modelsHistory.length===0){
+      wrap.innerHTML=`<div style="max-width:44rem">
+        <div class="eyebrow" style="margin-bottom:6px">Recommend a Model</div>
+        <p style="font-size:14px;color:var(--fg-muted);margin-bottom:1.5rem;line-height:1.7">Describe your situation and I'll match you to 2–3 models from <em>The Decision Book</em> by Krogerus & Tschäppeler, plus other established frameworks. I'll ask one or two focused questions first.</p>
+        <div style="margin-bottom:1.25rem"><div class="eyebrow-muted" style="margin-bottom:10px">Quick situations</div>
+        <div class="quick-prompts">
+          <button class="quick-prompt" onclick="triggerQuick('Everything feels like priority one this week.')">Everything feels like priority one this week.</button>
+          <button class="quick-prompt" onclick="triggerQuick('I keep relitigating a call I already made.')">I keep relitigating a call I already made.</button>
+          <button class="quick-prompt" onclick="triggerQuick('I\'m overcontrolling a project the team should own.')">I'm overcontrolling a project the team should own.</button>
+          <button class="quick-prompt" onclick="triggerQuick('I\'m tempted to pivot rather than push through.')">I'm tempted to pivot rather than push through.</button>
+        </div></div>
+      </div>`;
+    }
+  } else {
+    inputWrap.style.display='none';
+    const filtered=modelFilter==='all'?DECISION_MODELS:DECISION_MODELS.filter(m=>m.cat===modelFilter);
+    wrap.innerHTML=`<div style="max-width:44rem">${filtered.map(m=>`
+      <div class="model-card">
+        <div class="model-card-name">${m.name}</div>
+        <div class="model-card-src">${m.source}</div>
+        <div class="model-card-desc"><em>${m.oneLiner}</em></div>
+        <div class="model-card-section">When to use it</div>
+        <div class="model-card-body">${m.whenToUse}</div>
+        <div class="model-card-section">Run the exercise</div>
+        <div class="model-card-body">${m.exercise}</div>
+        <div class="model-card-section">What you walk away with</div>
+        <div class="model-card-body">${m.output}</div>
+        <button class="model-use-btn" onclick="useModel('${m.name}')">Walk me through this →</button>
+      </div>`).join('')}</div>`;
+  }
+}
+
+function triggerQuick(text){
+  if(modelsTab!=='recommend'){
+    modelsTab='recommend';
+    document.querySelectorAll('.models-tab')[0].classList.add('active');
+    document.querySelectorAll('.models-tab')[1].classList.remove('active');
+  }
+  renderModelsMain();
+  setTimeout(()=>{
+    const ta=document.getElementById('models-ta');
+    if(ta){ta.value=text;sendModels();}
+  },100);
+}
+
+function useModel(name){
+  modelsTab='recommend';
+  document.querySelectorAll('.models-tab')[0].classList.add('active');
+  document.querySelectorAll('.models-tab')[1].classList.remove('active');
+  renderModelsMain();
+  setTimeout(()=>{
+    const ta=document.getElementById('models-ta');
+    if(ta){ta.value=`Walk me through the ${name} model step by step for my current situation.`;sendModels();}
+  },100);
+}
+
+async function sendModels(){
+  const ta=document.getElementById('models-ta');
+  if(!ta)return;
+  const text=ta.value.trim();if(!text)return;
+  ta.value='';ta.style.height='44px';
+  const wrap=document.getElementById('models-main-content');
+  if(modelsHistory.length===0) wrap.innerHTML='<div style="max-width:44rem" id="models-chat-inner"></div>';
+  let inner=document.getElementById('models-chat-inner');
+  if(!inner){wrap.innerHTML='<div style="max-width:44rem" id="models-chat-inner">'+wrap.innerHTML+'</div>';inner=document.getElementById('models-chat-inner');}
+  appendMsgTo(inner,'user',text);
+  modelsHistory.push({role:'user',content:text});
+  const lid=loadingMsgIn(inner);
+  try{
+    const r=await apiCall(modelsHistory,SYSTEM_MODELS,1200);
+    lid.remove();appendMsgTo(inner,'assistant',r);
+    modelsHistory.push({role:'assistant',content:r});
+    wrap.scrollTop=wrap.scrollHeight;
+  }catch(e){lid.remove();appendMsgTo(inner,'assistant','Connection issue. Please try again.');}
+}
+
+// ── HISTORY ──
+function renderHistory(){
+  const el=document.getElementById('history-list');
+  if(!decisions.length){
+    el.innerHTML=`<div class="history-empty"><div class="history-empty-title">No decisions saved yet.</div><div class="history-empty-sub">Complete a decision flow to save your first record.</div><button class="btn btn-orange" onclick="startDecision()">Start a Decision</button></div>`;
+    return;
+  }
+  el.innerHTML=decisions.map(d=>`
+    <div class="history-row">
+      <div>
+        <div class="history-row-title">${d.title}</div>
+        <div class="history-row-meta"><span class="badge badge-type">${d.type}</span><span class="badge badge-path">${(d.recommendation?.path||'').slice(0,28)}…</span></div>
+        <div class="history-row-detail"><strong>Tradeoff:</strong> ${d.recommendation?.tradeoff||'—'}<br><strong>Next:</strong> ${d.recommendation?.next||'—'}</div>
+      </div>
+      <div class="history-row-date">${new Date(d.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+    </div>`).join('');
+}
+
+// ── API ──
+async function apiCall(messages,system,maxTokens=1000){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,system,messages})});
+  const d=await r.json();
+  if(d.error) throw new Error(d.error.message);
+  return d.content[0].text;
+}
+
+// ── UTILS ──
+function autoH(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px'}
+
+function appendMsg(containerId,role,text){
+  const c=document.getElementById(containerId);
+  const div=document.createElement('div');
+  div.className='msg-wrap '+role;
+  const time=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  div.innerHTML=`<div class="msg-bubble">${fmt(text)}</div><span class="msg-time">${time}</span>`;
+  c.appendChild(div);c.scrollTop=c.scrollHeight;
+}
+
+function appendMsgTo(el,role,text){
+  const div=document.createElement('div');
+  div.className='msg-wrap '+role;
+  const time=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  div.innerHTML=`<div class="msg-bubble">${fmt(text)}</div><span class="msg-time">${time}</span>`;
+  el.appendChild(div);el.scrollTop=el.scrollHeight;
+}
+
+function loadingMsg(containerId){
+  const c=document.getElementById(containerId);
+  const div=document.createElement('div');
+  div.className='msg-wrap assistant';
+  div.innerHTML=`<div class="msg-bubble"><div class="ld"><div class="ld-dot"></div><div class="ld-dot"></div><div class="ld-dot"></div></div></div>`;
+  c.appendChild(div);c.scrollTop=c.scrollHeight;
+  return div;
+}
+
+function loadingMsgIn(el){
+  const div=document.createElement('div');
+  div.className='msg-wrap assistant';
+  div.innerHTML=`<div class="msg-bubble"><div class="ld"><div class="ld-dot"></div><div class="ld-dot"></div><div class="ld-dot"></div></div></div>`;
+  el.appendChild(div);
+  return div;
+}
+
+function removeLoading(el){if(el&&el.parentNode)el.parentNode.removeChild(el)}
+
+function fmt(t){
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/^### (.*)/gm,'<h4 style="font-family:var(--font-display);font-size:15px;font-weight:500;margin:10px 0 4px;letter-spacing:-0.01em">$1</h4>')
+    .replace(/^## (.*)/gm,'<h3 style="font-family:var(--font-display);font-size:16px;font-weight:500;margin:12px 0 5px;letter-spacing:-0.01em">$1</h3>')
+    .replace(/^- (.*)/gm,'<div style="padding:2px 0 2px 14px;position:relative"><span style="position:absolute;left:0;color:var(--orange)">·</span>$1</div>')
+    .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+}
+
+// Init models on first load
+initModels();
+</script>
+</body>
+</html>
