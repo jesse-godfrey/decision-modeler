@@ -828,19 +828,27 @@ async function toggleVoice(){
   if(voiceConnected||voiceConnecting){endVoiceSession();return;}
   if(trayOpen) toggleTray();
   setVoiceState('connecting','Requesting microphone…');
+
+  // Get mic permission first
+  let stream;
   try{
-    await navigator.mediaDevices.getUserMedia({audio:true});
+    stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    stream.getTracks().forEach(t=>t.stop()); // release test stream
   }catch(e){
     setVoiceState('idle','','Microphone access denied. Check browser permissions.');
     if(!trayOpen) toggleTray();return;
   }
+
   setVoiceState('connecting','Connecting…');
   voiceConnecting=true;
+
+  // Get signed URL from Worker
   let signedUrl=null;
   try{
     const res=await fetch(WORKER_URL,{method:'POST'});
     if(!res.ok) throw new Error(`Token server error: ${res.status}`);
     const data=await res.json();
+    console.log('[Voice] Worker response:',data);
     if(data.error) throw new Error(data.error);
     signedUrl=data.signedUrl;
   }catch(e){
@@ -848,34 +856,87 @@ async function toggleVoice(){
     setVoiceState('idle','',`Could not reach voice server: ${e.message}`);
     if(!trayOpen) toggleTray();return;
   }
+
   if(!signedUrl){
     voiceConnecting=false;
     setVoiceState('idle','','No signed URL returned. Check ElevenLabs agent settings.');
     if(!trayOpen) toggleTray();return;
   }
+
+  console.log('[Voice] Got signed URL, opening WebSocket…');
+
   const lastDecision=buildLastDecisionSummary();
   const promptOverride=`You are Decision Modeler, a strategic decision partner for Jesse Godfrey, Executive Creative Director of University Relations at Clemson.\n\nPush back. Don't flatter. If his framing is weak, say so plainly. Default to asking 3–7 sharp questions before recommending anything. Be specific to what he just said — never generic advice. Short paragraphs. Name the tradeoff. End with either a clarifying question or a concrete next move. Prefer clarity over inspiration. No emojis.\n\n--- WHO JESSE IS ---\n${JESSE}\n--- END PROFILE ---\n\n--- MOST RECENT DECISION CONTEXT ---\n${lastDecision}\n--- END CONTEXT ---`;
+
   try{
     voiceWs=new WebSocket(signedUrl);
-    voiceWs.onopen=()=>{
+    voiceWs.binaryType='arraybuffer';
+
+    voiceWs.onopen=async ()=>{
+      console.log('[Voice] WebSocket opened, sending init…');
       voiceConnecting=false;voiceConnected=true;
-      voiceWs.send(JSON.stringify({type:'conversation_initiation_client_data',conversation_config_override:{agent:{prompt:{prompt:promptOverride},first_message:"What decision are you working on? I'll ask a few sharp questions before recommending anything — that's the deal."}}}));
+
+      // Send conversation init with personalization
+      voiceWs.send(JSON.stringify({
+        type:'conversation_initiation_client_data',
+        conversation_config_override:{
+          agent:{
+            prompt:{prompt:promptOverride},
+            first_message:"What decision are you working on? I'll ask a few sharp questions before recommending anything — that's the deal."
+          }
+        }
+      }));
+
       setVoiceState('connected','Listening');
+
+      // Start mic AFTER connection is confirmed
+      await setupMicCapture();
     };
+
     voiceWs.onmessage=(event)=>{
       if(event.data instanceof ArrayBuffer){
         playAudioBuffer(event.data);return;
       }
       try{
         const msg=JSON.parse(event.data);
-        if(msg.type==='agent_response'||msg.type==='audio') setVoiceState('speaking','Speaking…');
-        else if(msg.type==='user_transcript'||msg.type==='interruption') setVoiceState('connected','Listening');
-        else if(msg.type==='conversation_end') endVoiceSession();
-      }catch(e){}
+        console.log('[Voice] Message type:',msg.type);
+        if(msg.type==='audio') setVoiceState('speaking','Speaking…');
+        else if(msg.type==='agent_response') setVoiceState('speaking','Speaking…');
+        else if(msg.type==='user_transcript') setVoiceState('connected','Listening');
+        else if(msg.type==='interruption') setVoiceState('connected','Listening');
+        else if(msg.type==='ping'){
+          // Respond to keepalive pings
+          voiceWs.send(JSON.stringify({type:'pong',event_id:msg.ping_event?.event_id}));
+        }
+        else if(msg.type==='conversation_initiation_metadata'){
+          console.log('[Voice] Session confirmed:',msg);
+        }
+        else if(msg.type==='conversation_end'||msg.type==='disconnect'){
+          console.log('[Voice] Session ended by server');
+          endVoiceSession();
+        }
+      }catch(e){console.warn('[Voice] Message parse error:',e);}
     };
-    voiceWs.onerror=()=>{voiceConnecting=false;voiceConnected=false;setVoiceState('idle','','Connection error. Check your ElevenLabs agent is active.');if(!trayOpen) toggleTray();};
-    voiceWs.onclose=()=>{voiceConnecting=false;voiceConnected=false;setVoiceState('idle','');if(!trayOpen) toggleTray();};
-    await setupMicCapture();
+
+    voiceWs.onerror=(e)=>{
+      console.error('[Voice] WebSocket error:',e);
+      voiceConnecting=false;voiceConnected=false;
+      setVoiceState('idle','','Connection error. Check browser console for details.');
+      if(!trayOpen) toggleTray();
+    };
+
+    voiceWs.onclose=(e)=>{
+      console.log('[Voice] WebSocket closed. Code:',e.code,'Reason:',e.reason,'Clean:',e.wasClean);
+      voiceConnecting=false;voiceConnected=false;
+      // Only show error if it closed unexpectedly while connected
+      if(voiceConnected){
+        setVoiceState('idle','',`Session ended (code ${e.code})`);
+      } else {
+        setVoiceState('idle','');
+      }
+      if(!trayOpen) toggleTray();
+    };
+
   }catch(e){
     voiceConnecting=false;voiceConnected=false;
     setVoiceState('idle','',`Connection failed: ${e.message}`);
@@ -884,9 +945,10 @@ async function toggleVoice(){
 }
 
 function endVoiceSession(){
-  if(voiceWs){voiceWs.close();voiceWs=null;}
   if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;}
-  if(audioContext){audioContext.close();audioContext=null;}
+  if(audioContext){audioContext.close().catch(()=>{});audioContext=null;}
+  if(voiceWs&&voiceWs.readyState===WebSocket.OPEN){voiceWs.close(1000,'User ended session');}
+  voiceWs=null;
   voiceConnected=false;voiceConnecting=false;
   setVoiceState('idle','');
   if(!trayOpen) toggleTray();
@@ -895,21 +957,46 @@ function endVoiceSession(){
 async function setupMicCapture(){
   try{
     audioContext=new(window.AudioContext||window.webkitAudioContext)({sampleRate:16000});
-    micStream=await navigator.mediaDevices.getUserMedia({audio:{sampleRate:16000,channelCount:1,echoCancellation:true,noiseSuppression:true}});
+    await audioContext.resume();
+
+    micStream=await navigator.mediaDevices.getUserMedia({
+      audio:{sampleRate:16000,channelCount:1,echoCancellation:true,noiseSuppression:true,autoGainControl:true}
+    });
+
     const source=audioContext.createMediaStreamSource(micStream);
-    const workletCode=`class MicProc extends AudioWorkletProcessor{process(inputs){const ch=inputs[0][0];if(ch)this.port.postMessage(ch);return true;}}registerProcessor('mic-proc',MicProc);`;
-    await audioContext.audioWorklet.addModule(URL.createObjectURL(new Blob([workletCode],{type:'application/javascript'})));
-    const worklet=new AudioWorkletNode(audioContext,'mic-proc');
-    source.connect(worklet);
-    worklet.port.onmessage=(e)=>{
-      if(voiceWs&&voiceWs.readyState===WebSocket.OPEN){
-        const f32=e.data;const i16=new Int16Array(f32.length);
-        for(let i=0;i<f32.length;i++) i16[i]=Math.max(-32768,Math.min(32767,f32[i]*32768));
-        voiceWs.send(i16.buffer);
-      }
-    };
-    voiceWs.binaryType='arraybuffer';
-  }catch(e){console.warn('Mic setup failed:',e.message);}
+
+    // Try AudioWorklet first, fall back to ScriptProcessor
+    try{
+      const workletCode=`class MicProc extends AudioWorkletProcessor{process(inputs){const ch=inputs[0][0];if(ch)this.port.postMessage(Float32Array.from(ch));return true;}}registerProcessor('mic-proc',MicProc);`;
+      const blob=new Blob([workletCode],{type:'application/javascript'});
+      const url=URL.createObjectURL(blob);
+      await audioContext.audioWorklet.addModule(url);
+      URL.revokeObjectURL(url);
+      const worklet=new AudioWorkletNode(audioContext,'mic-proc',{processorOptions:{sampleRate:16000}});
+      source.connect(worklet);
+      worklet.port.onmessage=(e)=>sendAudioChunk(e.data);
+      console.log('[Voice] AudioWorklet mic active');
+    }catch(workletErr){
+      // Fallback: ScriptProcessor (deprecated but widely supported)
+      console.warn('[Voice] AudioWorklet failed, using ScriptProcessor fallback:',workletErr.message);
+      const processor=audioContext.createScriptProcessor(4096,1,1);
+      source.connect(processor);
+      processor.connect(audioContext.destination);
+      processor.onaudioprocess=(e)=>sendAudioChunk(e.inputBuffer.getChannelData(0));
+    }
+
+    console.log('[Voice] Mic capture started');
+  }catch(e){
+    console.error('[Voice] Mic capture failed:',e.message);
+    setVoiceState('connected','Listening (mic error — check console)');
+  }
+}
+
+function sendAudioChunk(f32){
+  if(!voiceWs||voiceWs.readyState!==WebSocket.OPEN) return;
+  const i16=new Int16Array(f32.length);
+  for(let i=0;i<f32.length;i++) i16[i]=Math.max(-32768,Math.min(32767,Math.round(f32[i]*32767)));
+  voiceWs.send(i16.buffer);
 }
 
 async function playAudioBuffer(buffer){
@@ -917,8 +1004,10 @@ async function playAudioBuffer(buffer){
   try{
     const decoded=await audioContext.decodeAudioData(buffer.slice(0));
     const src=audioContext.createBufferSource();
-    src.buffer=decoded;src.connect(audioContext.destination);src.start();
-  }catch(e){}
+    src.buffer=decoded;
+    src.connect(audioContext.destination);
+    src.start();
+  }catch(e){console.warn('[Voice] Audio decode error:',e.message);}
 }
 
 function buildLastDecisionSummary(){
