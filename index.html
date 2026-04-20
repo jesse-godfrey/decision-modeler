@@ -883,8 +883,12 @@ async function toggleVoice(){
           agent:{
             prompt:{prompt:promptOverride},
             first_message:"What decision are you working on? I'll ask a few sharp questions before recommending anything — that's the deal."
+          },
+          tts:{
+            agent_output_audio_format:'pcm_16000'
           }
-        }
+        },
+        custom_llm_extra_body:{},
       }));
 
       setVoiceState('connected','Listening');
@@ -1002,12 +1006,17 @@ function sendAudioChunk(f32){
 async function playAudioBuffer(buffer){
   if(!audioContext) return;
   try{
-    const decoded=await audioContext.decodeAudioData(buffer.slice(0));
+    // ElevenLabs sends raw PCM 16-bit 16kHz mono
+    const i16=new Int16Array(buffer);
+    const f32=new Float32Array(i16.length);
+    for(let i=0;i<i16.length;i++) f32[i]=i16[i]/32768.0;
+    const audioBuffer=audioContext.createBuffer(1,f32.length,16000);
+    audioBuffer.copyToChannel(f32,0);
     const src=audioContext.createBufferSource();
-    src.buffer=decoded;
+    src.buffer=audioBuffer;
     src.connect(audioContext.destination);
     src.start();
-  }catch(e){console.warn('[Voice] Audio decode error:',e.message);}
+  }catch(e){console.warn('[Voice] Audio playback error:',e.message);}
 }
 
 function buildLastDecisionSummary(){
