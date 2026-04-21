@@ -1103,11 +1103,11 @@ function renderHistory(){
   el.innerHTML=decisions.map(d=>`<div class="history-row"><div><div class="history-row-title">${d.title}</div><div class="history-row-meta"><span class="badge badge-type">${d.type}</span><span class="badge badge-path">${(d.recommendation?.path||'').slice(0,28)}…</span></div><div class="history-row-detail"><strong>Tradeoff:</strong> ${d.recommendation?.tradeoff||'—'}<br><strong>Next:</strong> ${d.recommendation?.next||'—'}</div></div><div class="history-row-date">${new Date(d.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div></div>`).join('');
 }
 
-// API
+// API — routed through Cloudflare Worker to avoid CORS
 async function apiCall(messages,system,maxTokens=1000){
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,system,messages})});
+  const r=await fetch(WORKER_URL+'claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,system,messages})});
   const d=await r.json();
-  if(d.error) throw new Error(d.error.message);
+  if(d.error) throw new Error(d.error.message||JSON.stringify(d.error));
   return d.content[0].text;
 }
 
