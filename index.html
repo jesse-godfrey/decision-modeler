@@ -898,18 +898,20 @@ async function toggleVoice(){
     };
 
     voiceWs.onmessage=(event)=>{
-      if(event.data instanceof ArrayBuffer){
-        playAudioBuffer(event.data);return;
-      }
+      // ElevenLabs sends JSON messages, not binary
       try{
         const msg=JSON.parse(event.data);
         console.log('[Voice] Message type:',msg.type);
-        if(msg.type==='audio') setVoiceState('speaking','Speaking…');
+        if(msg.type==='audio'){
+          // Audio comes as base64 in msg.audio_event.audio_base_64
+          if(msg.audio_event?.audio_base_64) playBase64Audio(msg.audio_event.audio_base_64);
+          setVoiceState('speaking','Speaking…');
+        }
         else if(msg.type==='agent_response') setVoiceState('speaking','Speaking…');
         else if(msg.type==='user_transcript') setVoiceState('connected','Listening');
         else if(msg.type==='interruption') setVoiceState('connected','Listening');
+        else if(msg.type==='agent_response_correction') setVoiceState('connected','Listening');
         else if(msg.type==='ping'){
-          // Respond to keepalive pings
           voiceWs.send(JSON.stringify({type:'pong',event_id:msg.ping_event?.event_id}));
         }
         else if(msg.type==='conversation_initiation_metadata'){
@@ -998,15 +1000,42 @@ async function setupMicCapture(){
 
 function sendAudioChunk(f32){
   if(!voiceWs||voiceWs.readyState!==WebSocket.OPEN) return;
+  // Convert float32 to int16
   const i16=new Int16Array(f32.length);
   for(let i=0;i<f32.length;i++) i16[i]=Math.max(-32768,Math.min(32767,Math.round(f32[i]*32767)));
-  voiceWs.send(i16.buffer);
+  // ElevenLabs expects base64-encoded PCM inside a JSON message
+  const bytes=new Uint8Array(i16.buffer);
+  let binary='';
+  for(let i=0;i<bytes.length;i++) binary+=String.fromCharCode(bytes[i]);
+  const base64=btoa(binary);
+  voiceWs.send(JSON.stringify({
+    user_audio_chunk: base64
+  }));
+}
+
+async function playBase64Audio(base64){
+  if(!audioContext) return;
+  try{
+    // Decode base64 to binary
+    const binary=atob(base64);
+    const bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+    // Interpret as 16-bit PCM at 16kHz
+    const i16=new Int16Array(bytes.buffer);
+    const f32=new Float32Array(i16.length);
+    for(let i=0;i<i16.length;i++) f32[i]=i16[i]/32768.0;
+    const audioBuffer=audioContext.createBuffer(1,f32.length,16000);
+    audioBuffer.copyToChannel(f32,0);
+    const src=audioContext.createBufferSource();
+    src.buffer=audioBuffer;
+    src.connect(audioContext.destination);
+    src.start();
+  }catch(e){console.warn('[Voice] Audio playback error:',e.message);}
 }
 
 async function playAudioBuffer(buffer){
   if(!audioContext) return;
   try{
-    // ElevenLabs sends raw PCM 16-bit 16kHz mono
     const i16=new Int16Array(buffer);
     const f32=new Float32Array(i16.length);
     for(let i=0;i<i16.length;i++) f32[i]=i16[i]/32768.0;
