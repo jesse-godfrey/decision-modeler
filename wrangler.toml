@@ -1,5 +1,6 @@
 name = "decisionmodeleragent"
 main = "worker.js"
 compatibility_date = "2024-01-01"
+account_id = "06ed058317a3a41e755252b472667f2d"
 
-[vars]
+
