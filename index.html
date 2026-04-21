@@ -893,8 +893,8 @@ async function toggleVoice(){
 
       setVoiceState('connected','Listening');
 
-      // Start mic AFTER connection is confirmed
-      await setupMicCapture();
+      // Delay mic start to give ElevenLabs time to process init message
+      setTimeout(()=>setupMicCapture(), 500);
     };
 
     voiceWs.onmessage=(event)=>{
