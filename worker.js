@@ -1,4 +1,3 @@
-// Decision Modeler Worker v2
 
 const AGENT_ID = "agent_8801kphe7228fwma1j9gpf8fdr20";
 
