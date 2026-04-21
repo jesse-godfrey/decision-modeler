@@ -956,6 +956,7 @@ function endVoiceSession(){
   if(voiceWs&&voiceWs.readyState===WebSocket.OPEN){voiceWs.close(1000,'User ended session');}
   voiceWs=null;
   voiceConnected=false;voiceConnecting=false;
+  nextPlayTime=0;audioQueue=[];isPlaying=false;
   setVoiceState('idle','');
   if(!trayOpen) toggleTray();
 }
@@ -1013,23 +1014,31 @@ function sendAudioChunk(f32){
   }));
 }
 
+// Audio queue to prevent overlapping playback
+let audioQueue=[];
+let isPlaying=false;
+let nextPlayTime=0;
+
 async function playBase64Audio(base64){
   if(!audioContext) return;
   try{
-    // Decode base64 to binary
     const binary=atob(base64);
     const bytes=new Uint8Array(binary.length);
     for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
-    // Interpret as 16-bit PCM at 16kHz
     const i16=new Int16Array(bytes.buffer);
     const f32=new Float32Array(i16.length);
     for(let i=0;i<i16.length;i++) f32[i]=i16[i]/32768.0;
     const audioBuffer=audioContext.createBuffer(1,f32.length,16000);
     audioBuffer.copyToChannel(f32,0);
+
+    // Schedule chunk to play immediately after the previous one ends
+    const now=audioContext.currentTime;
+    if(nextPlayTime<now) nextPlayTime=now;
     const src=audioContext.createBufferSource();
     src.buffer=audioBuffer;
     src.connect(audioContext.destination);
-    src.start();
+    src.start(nextPlayTime);
+    nextPlayTime+=audioBuffer.duration;
   }catch(e){console.warn('[Voice] Audio playback error:',e.message);}
 }
 
