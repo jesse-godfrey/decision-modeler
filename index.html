@@ -490,7 +490,9 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:500;letter-spacing:-0.02
 </div>
 
 <script>
-const WORKER_URL = "https://decisionmodeleragent.jessegodfrey.workers.dev/";
+const WORKER_URL = "https://decisionmodeleragent.jessegodfrey.workers.dev";
+const CLAUDE_URL = WORKER_URL + "/claude";
+const VOICE_URL = WORKER_URL + "/";
 
 const JESSE = `Name: Jesse Godfrey
 Role: Executive Creative Director, University Relations, Clemson University
@@ -846,7 +848,7 @@ async function toggleVoice(){
   // Get signed URL from Worker
   let signedUrl=null;
   try{
-    const res=await fetch(WORKER_URL,{method:'POST'});
+    const res=await fetch(VOICE_URL,{method:'POST'});
     if(!res.ok) throw new Error(`Token server error: ${res.status}`);
     const data=await res.json();
     console.log('[Voice] Worker response:',data);
@@ -1144,7 +1146,7 @@ function renderHistory(){
 
 // API — routed through Cloudflare Worker to avoid CORS
 async function apiCall(messages,system,maxTokens=1000){
-  const r=await fetch(WORKER_URL+'claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,system,messages})});
+  const r=await fetch(CLAUDE_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,system,messages})});
   const d=await r.json();
   if(d.error) throw new Error(d.error.message||JSON.stringify(d.error));
   return d.content[0].text;
